@@ -1,13 +1,16 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprites_group, mirror_sprites_group
+from Constant_files.SPRITE_GROUPS import all_sprite_group, mirror_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
+from classes.hitbox_classes import Hitbox
+from Constant_files.CONSTANT_OBJECTS import object_description
 
 
 class Mirror(pygame.sprite.Sprite):
     def __init__(self, x, y, orientation,  health=100, reflection_angle=45, state='normal', unique_abilities=None):
-        super().__init__(all_sprites_group, mirror_sprites_group)
+        super().__init__(all_sprite_group, mirror_sprite_group)
         self.x = BOARD_LEFT + x * CELL_SIZE # Координата X зеркала
         self.y = BOARD_TOP + y * CELL_SIZE # Координата Y зеркала
+
         self.orientation = orientation
         self.health = health  # Здоровье зеркала
         self.reflection_angle = reflection_angle  # Угол отражения
@@ -18,6 +21,7 @@ class Mirror(pygame.sprite.Sprite):
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)  # Прямоугольник для взаимодействия
         self.rotation_angle = 0  # Угол поворота зеркала (в градусах)
+        self.hitbox = Hitbox(self)
         self.draw()
 
     def rotate(self, angle):
@@ -64,16 +68,17 @@ class Mirror(pygame.sprite.Sprite):
     def draw(self):
         # Рисуем диагонали в зависимости от ориентации зеркала
         if self.orientation in [1, 2]:
-            pygame.draw.line(self.image, pygame.Color('blue'), (0, 0), (50, 50), 15)
+            pygame.draw.line(self.image, pygame.Color('blue'), (0, 0), (CELL_SIZE, CELL_SIZE), 2)
         elif self.orientation in [3, 4]:
-            pygame.draw.line(self.image, pygame.Color('blue'), (0, 50), (50, 0), 15)
-        pygame.draw.circle(self.image, pygame.Color('red'), (25, 25), 2)
+            pygame.draw.line(self.image, pygame.Color('blue'), (0, CELL_SIZE), (CELL_SIZE, 0), 2)
 
     # Пример уникальной способности
     def unique_ability_example(self):
         pass
 
     def reflect_laser(self, laser):
+        if self.state == 'destroyed':
+            return
         if self.orientation == 1:
             if laser.direction == 'right':
                 laser.direction = 'down'
@@ -81,6 +86,7 @@ class Mirror(pygame.sprite.Sprite):
                 laser.direction = 'left'
             else:
                 self.take_damage(laser.damage)
+                laser.kill_self()
 
         elif self.orientation == 2:
             if laser.direction == 'down':
@@ -89,6 +95,7 @@ class Mirror(pygame.sprite.Sprite):
                 laser.direction = 'up'
             else:
                 self.take_damage(laser.damage)
+                laser.kill_self()
 
         elif self.orientation == 3:
             if laser.direction == 'right':
@@ -97,6 +104,7 @@ class Mirror(pygame.sprite.Sprite):
                 laser.direction = 'left'
             else:
                 self.take_damage(laser.damage)
+                laser.kill_self()
 
         elif self.orientation == 4:
             if laser.direction == 'up':
@@ -105,3 +113,7 @@ class Mirror(pygame.sprite.Sprite):
                 laser.direction = 'down'
             else:
                 self.take_damage(laser.damage)
+                laser.kill_self()
+
+    def display_self_description(self):
+        object_description.set_trackable_object(self)
