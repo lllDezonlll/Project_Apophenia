@@ -3,8 +3,9 @@ import os
 import pygame
 
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('../../data', name)
+# Функция загрузки изображений.
+def load_image(path, name, colorkey=None):
+    fullname = os.path.join(path, name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -15,11 +16,10 @@ def load_image(name, colorkey=None):
         if colorkey == -1:
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey)
-    else:
-        image = image.convert_alpha()
     return image
 
 
+# Функция загрузки карты.
 def load_map(filename):
     filename = "data/maps/" + filename
 

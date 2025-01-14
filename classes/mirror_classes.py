@@ -1,55 +1,42 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, mirror_sprite_group
+from Constant_files.SPRITE_GROUPS import all_sprite_group, object_sprite_group, mirror_sprite_group, texture_mirror_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
+from classes.gui_classes import Following_Texture
+from funcs.prom_func.Load_func import load_image
 
 
+# Класс обычного одностороннего зеркала с обычным 90-градусным отражением.
 class Mirror(pygame.sprite.Sprite):
-    def __init__(self, x, y, orientation,  health=100, reflection_angle=45, state='normal', unique_abilities=None):
-        super().__init__(all_sprite_group, mirror_sprite_group)
-        self.x = BOARD_LEFT + x * CELL_SIZE # Координата X зеркала
-        self.y = BOARD_TOP + y * CELL_SIZE # Координата Y зеркала
+    image = load_image('data/textures', 'test_mirror_orientation.png', colorkey=-1)
 
-        self.orientation = orientation
-        self.health = health  # Здоровье зеркала
-        self.reflection_angle = reflection_angle  # Угол отражения
-        self.state = state  # Состояние зеркала (например, нормальное, поврежденное)
-        self.unique_abilities = unique_abilities if unique_abilities else []  # Уникальные способности
-        self.width = CELL_SIZE  # Ширина зеркала
-        self.height = CELL_SIZE  # Высота зеркала
+    def __init__(self, x, y, orientation,  health=100, reflection_angle=45, state='normal', unique_abilities=None):
+        super().__init__(all_sprite_group, object_sprite_group, mirror_sprite_group)
+        self.x = BOARD_LEFT + x * CELL_SIZE  # Координата X зеркала.
+        self.y = BOARD_TOP + y * CELL_SIZE  # Координата Y зеркала.
+
+        self.orientation = orientation  # Поворот зеркала.
+        self.health = health  # Здоровье зеркала.
+        self.state = state  # Состояние зеркала (например, нормальное, поврежденное).
+        self.unique_abilities = unique_abilities if unique_abilities else []  # Уникальные способности.
+        self.width = CELL_SIZE  # Ширина зеркала.
+        self.height = CELL_SIZE  # Высота зеркала.
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)  # Прямоугольник для взаимодействия
-        self.rotation_angle = 0  # Угол поворота зеркала (в градусах)
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)  # Прямоугольник для взаимодействия.
+
         self.hitbox = Hitbox(self)
+        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=5, offset_y=-5)
         self.draw()
 
-    def rotate(self, angle):
-        """ Поворот зеркала """
-        self.rotation_angle = (self.rotation_angle + angle) % 360
-        self.image = pygame.transform.rotate(self.create_mirror_image(), self.rotation_angle)
-        self.rect = self.image.get_rect(center=self.rect.center)
-
-    def create_mirror_image(self):
-        """ Создание базового изображения зеркала """
-        mirror_image = pygame.Surface((self.width, self.height))
-        mirror_image.fill((255, 255, 255))  # Белый цвет для зеркала
-        pygame.draw.polygon(mirror_image, (0, 0, 0), [(0, 0), (self.width, 0), (self.width, self.height),
-                                                      (0, self.height)])  # Рисуем простое прямоугольное зеркало
-        return mirror_image
-
-    def reflect_laser(self, laser_angle):
-        """ Отражение лазера от зеркала """
-        new_angle = laser_angle + self.reflection_angle
-        return new_angle % 360  # Возвращаем новый угол отражения, ограниченный диапазоном [0, 360]
-
+    # Получение урона.
     def take_damage(self, damage):
-        """ Уменьшение здоровья зеркала """
         self.health -= damage
         if self.health <= 0:
             self.state = 'destroyed'
             self.image.fill((255, 0, 0))  # Изменяем цвет на красный для визуализации разрушенного состояния
 
+    # Восстановление здоровья.
     def heal(self, amount):
         """ Восстановление здоровья зеркала """
         if self.state != 'destroyed':
@@ -57,63 +44,59 @@ class Mirror(pygame.sprite.Sprite):
             if self.health > 100:
                 self.health = 100
 
-    def activate_ability(self):
-        """ Активация уникальной способности (по типу зеркала) """
-        pass
-
-    def update(self):
-        """ Обновление состояния зеркала """
-        pass
-
     def draw(self):
         # Рисуем диагонали в зависимости от ориентации зеркала
-        if self.orientation in [1, 2]:
+        if self.orientation in [180, 0]:
             pygame.draw.line(self.image, pygame.Color('blue'), (0, 0), (CELL_SIZE, CELL_SIZE), 2)
-        elif self.orientation in [3, 4]:
+        elif self.orientation in [90, -90]:
             pygame.draw.line(self.image, pygame.Color('blue'), (0, CELL_SIZE), (CELL_SIZE, 0), 2)
 
-    # Пример уникальной способности
-    def unique_ability_example(self):
-        pass
-
+    # Отражение задетого лазера.
     def reflect_laser(self, laser):
+        # Зеркало не отражает, если оно сломано.
         if self.state == 'destroyed':
             return
-        if self.orientation == 1:
-            if laser.direction == 'right':
-                laser.direction = 'down'
-            elif laser.direction == 'up':
-                laser.direction = 'left'
+
+        # Далее идут правила отражения этого зеркала.
+        if self.orientation == 0:  # Узнать поворот зеркала.
+            if laser.orientation == 90:  # Узнать поворот лазера.
+                laser.orientation = 0  # Поменять направление полёта лазера.
+            elif laser.orientation == 180:  # Узнать поворот лазера, прилетевшего с другой стороны.
+                laser.orientation = -90  # Поменять направление полёта лазера.
+            else:  # В случае прилёта лазера не по правилам отражения:
+                self.take_damage(laser.damage)  # Получить урон.
+                laser.kill_self()  # Уничтожить лазер.
+
+        elif self.orientation == 90:
+            if laser.orientation == -90:
+                laser.orientation = 0
+            elif laser.orientation == 180:
+                laser.orientation = 90
             else:
                 self.take_damage(laser.damage)
                 laser.kill_self()
 
-        elif self.orientation == 2:
-            if laser.direction == 'down':
-                laser.direction = 'right'
-            elif laser.direction == 'left':
-                laser.direction = 'up'
+        elif self.orientation == 180:
+            if laser.orientation == 0:
+                laser.orientation = 90
+            elif laser.orientation == -90:
+                laser.orientation = 180
             else:
                 self.take_damage(laser.damage)
                 laser.kill_self()
 
-        elif self.orientation == 3:
-            if laser.direction == 'right':
-                laser.direction = 'up'
-            elif laser.direction == 'down':
-                laser.direction = 'left'
+        elif self.orientation == -90:
+            if laser.orientation == 0:
+                laser.orientation = -90
+            elif laser.orientation == 90:
+                laser.orientation = 180
             else:
                 self.take_damage(laser.damage)
                 laser.kill_self()
 
-        elif self.orientation == 4:
-            if laser.direction == 'up':
-                laser.direction = 'right'
-            elif laser.direction == 'left':
-                laser.direction = 'down'
-            else:
-                self.take_damage(laser.damage)
-                laser.kill_self()
-
+    # Отображает своё описание в специальном информационном поле, при получении сигнала от своего хитбокса.
     def display_self_description(self):
         object_description.set_trackable_object(self)
+
+    def update(self):
+        pass
