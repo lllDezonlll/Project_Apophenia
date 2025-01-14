@@ -1,5 +1,6 @@
-SIZE = WIDTH, HEIGHT = 1920, 1080
-FPS = 60
-BOARD_LEFT, BOARD_TOP = 485, 65
-CELL_SIZE = 50
-CELL_COUNT = 19
+# Файл с константами.
+SIZE = WIDTH, HEIGHT = 1920, 1080  # Размер окна.
+FPS = 120  # Кадры в секунду.
+BOARD_LEFT, BOARD_TOP = 485, 65  # Расположение игрового поля по x и y соответственно.
+CELL_SIZE = 50  # Размер клеток игрового поля.
+CELL_COUNT = 19  # Количество клеток игрового поля (x на x).
