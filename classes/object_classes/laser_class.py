@@ -1,10 +1,10 @@
 import pygame
-from math import ceil
 
 from Constant_files.SPRITE_GROUPS import all_sprite_group, laser_sprite_group, mirror_sprite_group, texture_laser_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT, FPS
-from classes.gui_classes import Following_Texture
+from classes.gui_classes.gui_classes import Following_Texture
 from funcs.prom_func.Load_func import load_image
+from funcs.prom_func.Calc_coords_func import find_coords_on_board
 
 
 # Класс атаки лазером.
@@ -31,16 +31,16 @@ class Laser(pygame.sprite.Sprite):
     def move(self):
         if self.orientation == -90:
             self.rect = self.rect.move(0, -self.speed)  # Подобные строчки отвечают за само движение лазера.
-            self.rect.x = ceil((self.rect.x - BOARD_LEFT) / CELL_SIZE) * CELL_SIZE - CELL_SIZE / 2 + BOARD_LEFT # Подобные строчки отвечают за выравнивание лазера по сетке.
+            self.rect.x = find_coords_on_board(self.rect.x, self.rect.y)[0] * CELL_SIZE + CELL_SIZE / 2 + BOARD_LEFT - self.rect.w / 2 # Подобные строчки отвечают за выравнивание лазера по сетке.
         elif self.orientation == 90:
             self.rect = self.rect.move(0, self.speed)
-            self.rect.x = ceil((self.rect.x - BOARD_LEFT) / CELL_SIZE) * CELL_SIZE - CELL_SIZE / 2 + BOARD_LEFT
+            self.rect.x = find_coords_on_board(self.rect.x, self.rect.y)[0] * CELL_SIZE + CELL_SIZE / 2 + BOARD_LEFT - self.rect.w / 2
         elif self.orientation == 180:
             self.rect = self.rect.move(-self.speed, 0)
-            self.rect.y = ceil((self.rect.y - BOARD_TOP) / CELL_SIZE) * CELL_SIZE - CELL_SIZE / 2 + BOARD_TOP
+            self.rect.y = find_coords_on_board(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
         elif self.orientation == 0:
             self.rect = self.rect.move(self.speed, 0)
-            self.rect.y = ceil((self.rect.y - BOARD_TOP) / CELL_SIZE) * CELL_SIZE - CELL_SIZE / 2 + BOARD_TOP
+            self.rect.y = find_coords_on_board(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
 
     # Удаление себя и своей текстуры.
     def kill_self(self):

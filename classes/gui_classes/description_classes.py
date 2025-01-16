@@ -54,7 +54,7 @@ class Object_descriptiom(Description):
         font = pygame.font.Font(None, 20)
         self.image.blit(font.render(type(self.object).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
         self.image.blit(font.render(str(self.object.health) + 'HP', 1, pygame.Color('red')), (10, 50, self.width, self.height))
-        self.image.blit(font.render(str(self.object.orientation) + ' Orientation', 1, pygame.Color('red')),(10, 90, self.width, self.height))
+        self.image.blit(font.render(str(self.object.orientation) + ' Orientation', 1, pygame.Color('red')), (10, 90, self.width, self.height))
 
     def update(self):
         if self.object is None:
