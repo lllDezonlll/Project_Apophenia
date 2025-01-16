@@ -1,9 +1,9 @@
 import pygame
 from Constant_files.SPRITE_GROUPS import all_sprite_group, object_sprite_group, mirror_sprite_group, texture_mirror_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
-from classes.hitbox_classes import Hitbox
+from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
-from classes.gui_classes import Following_Texture
+from classes.gui_classes.gui_classes import Following_Texture
 from funcs.prom_func.Load_func import load_image
 
 
@@ -11,10 +11,11 @@ from funcs.prom_func.Load_func import load_image
 class Mirror(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_mirror_orientation.png', colorkey=-1)
 
-    def __init__(self, x, y, orientation,  health=100, reflection_angle=45, state='normal', unique_abilities=None):
+    def __init__(self, x, y, orientation, board, health=100, state='normal', unique_abilities=None):
         super().__init__(all_sprite_group, object_sprite_group, mirror_sprite_group)
-        self.x = BOARD_LEFT + x * CELL_SIZE  # Координата X зеркала.
-        self.y = BOARD_TOP + y * CELL_SIZE  # Координата Y зеркала.
+        self.x = x  # Координата X зеркала на клеточном поле.
+        self.y = y  # Координата Y зеркала на клеточном поле.
+        self.board = board  # Доска, к которой привязано зеркало.
 
         self.orientation = orientation  # Поворот зеркала.
         self.health = health  # Здоровье зеркала.
@@ -23,7 +24,7 @@ class Mirror(pygame.sprite.Sprite):
         self.width = CELL_SIZE  # Ширина зеркала.
         self.height = CELL_SIZE  # Высота зеркала.
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)  # Прямоугольник для взаимодействия.
+        self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=5, offset_y=-5)
@@ -97,6 +98,11 @@ class Mirror(pygame.sprite.Sprite):
     # Отображает своё описание в специальном информационном поле, при получении сигнала от своего хитбокса.
     def display_self_description(self):
         object_description.set_trackable_object(self)
+
+    def kill_self(self):
+        self.texture.kill()
+        self.board.board[self.y][self.x] = '?'
+        self.kill()
 
     def update(self):
         pass

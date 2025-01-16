@@ -1,5 +1,5 @@
 import pygame
-from classes.description_classes import Tile_description, Object_descriptiom
+from classes.gui_classes.description_classes import Tile_description, Object_descriptiom
 from Constant_files.CONSTANTS import SIZE
 
 # Настройки по умолчанию и константные объекты, которые создаются всего один раз.
