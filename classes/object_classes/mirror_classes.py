@@ -27,7 +27,7 @@ class Mirror(pygame.sprite.Sprite):
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=5, offset_y=-5)
+        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=2, offset_y=-2)
         self.draw()
 
     # Получение урона.
