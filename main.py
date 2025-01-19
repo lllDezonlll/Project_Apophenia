@@ -75,6 +75,7 @@ if __name__ == '__main__':
 
         laser_sprite_group.draw(screen)
         texture_laser_sprite_group.draw(screen)
+
         cannon_sprite_group.draw(screen)
 
         description_sprite_group.draw(screen)
