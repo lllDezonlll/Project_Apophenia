@@ -4,7 +4,7 @@ from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
 from classes.gui_classes.gui_classes import Following_Texture
-from funcs.prom_func.Load_func import load_image
+from funcs.prom_funcs.Load_func import load_image
 
 
 # Класс обычного одностороннего зеркала с обычным 90-градусным отражением.
@@ -104,5 +104,5 @@ class Mirror(pygame.sprite.Sprite):
         self.board.board[self.y][self.x] = '?'
         self.kill()
 
-    def update(self):
+    def update(self, event):
         pass

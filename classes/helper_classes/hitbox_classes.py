@@ -8,11 +8,13 @@ class Hitbox(pygame.sprite.Sprite):
         self.object = object
         self.rect = self.object.rect
 
-    def update(self):
+    def update(self, event):
         # Следовние за объектом и подстраивание своих размеров под него.
         self.rect = self.object.rect
 
         # Передаёт сигнал о отображении своего описания объектам, которых касается курсор.
         if (pygame.mouse.get_pos()[0] in range(self.rect.x, self.rect.x + self.rect.width) and
                 pygame.mouse.get_pos()[1] in range(self.rect.y, self.rect.y + self.rect.height)):
+            if type(self.object).__name__ == 'Base':
+                return
             self.object.display_self_description()

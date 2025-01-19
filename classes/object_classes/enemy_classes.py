@@ -4,7 +4,8 @@ from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
 from classes.gui_classes.gui_classes import Following_Texture
-from funcs.prom_func.Load_func import load_image
+from funcs.prom_funcs.Load_func import load_image
+
 
 class Enemy(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
@@ -22,7 +23,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Enemy.image, [all_sprite_group, texture_enemy_sprite_group], rotatable=True)
+        self.texture = Following_Texture(self, Enemy.image, [all_sprite_group, texture_enemy_sprite_group])
         self.draw()
 
     # Получение урона.
@@ -59,5 +60,5 @@ class Enemy(pygame.sprite.Sprite):
         self.board.board[self.y][self.x] = '?'
         self.kill()
 
-    def update(self):
+    def update(self, event):
         pass
