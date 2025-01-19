@@ -6,6 +6,7 @@ from Constant_files.CONSTANT_OBJECTS import screen, clock
 
 from classes.helper_classes.board_classes import tiles_board, game_objects_board
 from classes.object_classes.laser_class import Laser
+from classes.object_classes.enemy_classes import Enemy
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Wall_Tile, Default_Tile, Void_Tile
 from funcs.prom_func.Calc_coords_func import find_coords_on_board
@@ -19,6 +20,7 @@ def terminate():    # Закончить работу программы.
 if __name__ == '__main__':
     pygame.init()
     pygame.mouse.set_visible(False)  # Удаление видимости системного курсора.
+    enemy = Enemy(5, 10, game_objects_board, tiles_board)
 
     while True:  # Основной игровой цикл.
         screen.fill((0, 0, 0))
@@ -37,6 +39,8 @@ if __name__ == '__main__':
                     Laser(laser_x, laser_y, 180)
                 if event.key == pygame.K_d:
                     Laser(laser_x, laser_y, 0)
+                if event.key == pygame.K_f:
+                    enemy.move()
                 if event.key == pygame.K_1:
                     game_objects_board.add_object(Mirror(x, y, 0, game_objects_board), del_previous=True)
                 if event.key == pygame.K_2:
@@ -59,6 +63,7 @@ if __name__ == '__main__':
         tiles_sprite_group.draw(screen)
         mirror_sprite_group.draw(screen)
         texture_mirror_sprite_group.draw(screen)
+        texture_enemy_sprite_group.draw(screen)
         laser_sprite_group.draw(screen)
         texture_laser_sprite_group.draw(screen)
         description_sprite_group.draw(screen)
