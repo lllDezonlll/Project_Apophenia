@@ -4,7 +4,7 @@ from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
 from classes.gui_classes.gui_classes import Following_Texture
-from funcs.prom_func.Load_func import load_image
+from funcs.prom_funcs.Load_func import load_image
 
 
 # Класс обычного одностороннего зеркала с обычным 90-градусным отражением.
@@ -16,6 +16,7 @@ class Mirror(pygame.sprite.Sprite):
         self.x = x  # Координата X зеркала на клеточном поле.
         self.y = y  # Координата Y зеркала на клеточном поле.
         self.board = board  # Доска, к которой привязано зеркало.
+        self.board.print_objects()
 
         self.orientation = orientation  # Поворот зеркала.
         self.health = health  # Здоровье зеркала.
@@ -27,15 +28,15 @@ class Mirror(pygame.sprite.Sprite):
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=5, offset_y=-5)
+        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=2, offset_y=-2)
+        self.board.add_object(self, del_previous=True)
         self.draw()
 
     # Получение урона.
     def take_damage(self, damage):
         self.health -= damage
         if self.health <= 0:
-            self.state = 'destroyed'
-            self.image.fill((255, 0, 0))  # Изменяем цвет на красный для визуализации разрушенного состояния
+            self.kill_self()
 
     # Восстановление здоровья.
     def heal(self, amount):
@@ -101,8 +102,8 @@ class Mirror(pygame.sprite.Sprite):
 
     def kill_self(self):
         self.texture.kill()
-        self.board.board[self.y][self.x] = '?'
+        self.rect.x, self.rect.y = 10000, 10000
         self.kill()
 
-    def update(self):
+    def update(self, event):
         pass

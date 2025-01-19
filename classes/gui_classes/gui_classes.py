@@ -1,6 +1,6 @@
 import pygame
 from Constant_files.SPRITE_GROUPS import all_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group
-from funcs.prom_func.Load_func import load_image
+from funcs.prom_funcs.Load_func import load_image
 from Constant_files.CONSTANT_OBJECTS import object_description, tile_description
 
 
@@ -15,10 +15,11 @@ class Following_Texture(pygame.sprite.Sprite):
         self.offset_x, self.offset_y = offset_x, offset_y
         self.default_offset_x, self.default_offset_y = offset_x, offset_y
         self.rotatable = rotatable
+        self.rect.x, self.rect.y = 10000, 10000
         if self.rotatable:
             self.orientation = None
 
-    def update(self):
+    def update(self, event):
         # Проверка на статичность или ?вращабельность?.
         if self.rotatable:
             if self.orientation != self.object.orientation:
@@ -47,10 +48,12 @@ class Cursor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__(all_sprite_group, cursor_sprite_group)
         self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
-        self.texture = Following_Texture(self, Cursor.image, self.groups())
+        self.image.fill(pygame.Color('white'))
         self.rect = self.image.get_rect()
+        self.texture = Following_Texture(self, Cursor.image, self.groups(), offset_y=-3, offset_x=-3)
 
-    def update(self):
+
+    def update(self, event):
         # Следование за системным курсором и обновления затрагиваемого описания.
         self.update_description()
         if pygame.mouse.get_focused():

@@ -1,7 +1,7 @@
 from classes.object_classes.tile_classes import Default_Tile, Void_Tile, Wall_Tile
 from classes.object_classes.mirror_classes import Mirror
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT
-from funcs.prom_func.Load_func import load_map
+from funcs.prom_funcs.Load_func import load_map
 import pygame
 
 
@@ -77,15 +77,22 @@ class Game_Objects_Board(Board):
                     self.board[y][x] = Mirror(x, y, int(current_data[-3::]), self)
 
     def add_object(self, object, del_previous=False):
-        if del_previous:
-            self.del_object(object)
-        self.board[object.y][object.x] = object
+        try:
+            if del_previous:
+                self.del_object(self.board[object.y][object.x])
+            self.board[object.y][object.x] = object
+        except Exception:
+            pass
+
+
 
     def del_object(self, object):
         try:
-            self.board[object.y][object.x].kill_self()
+            self.board[object.y][object.x] = '?'
+            object.kill_self()
         except Exception:
             pass
+
 
 
 map = load_map('map.txt')  # Загрузка карты.
