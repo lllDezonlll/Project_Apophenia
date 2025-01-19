@@ -15,6 +15,9 @@ class Description(pygame.sprite.Sprite):
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
         pygame.draw.rect(self.image, pygame.Color('red'), (0, 0, self.width, self.height), width=3)
 
+    def update(self, event):
+        pass
+
 
 # Класс описания тайлов.
 class Tile_description(Description):
@@ -32,7 +35,7 @@ class Tile_description(Description):
         font = pygame.font.Font(None, 20)
         self.image.blit(font.render(type(self.tile).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
 
-    def update(self):
+    def update(self, event):
         if self.tile is None:
             return
         self.display_tile_info()
@@ -57,7 +60,24 @@ class Object_descriptiom(Description):
         if type(self.object).__name__ == 'Mirror':
             self.image.blit(font.render(str(self.object.orientation) + ' Orientation', 1, pygame.Color('red')), (10, 90, self.width, self.height))
 
-    def update(self):
+    def update(self, event):
         if self.object is None:
             return
         self.display_object_info()
+
+
+class Base_description(Description):
+    def __init__(self, image, x, y, width, height, base):
+        super().__init__(image, x, y, width, height)
+        self.object = base
+
+    def display_object_info(self):
+        self.set_default_description_image()
+        font = pygame.font.Font(None, 20)
+        self.image.blit(font.render(type(self.object).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
+        self.image.blit(font.render(str(self.object.health) + 'HP', 1, pygame.Color('red')), (10, 50, self.width, self.height))
+
+    def update(self, event):
+        self.display_object_info()
+
+

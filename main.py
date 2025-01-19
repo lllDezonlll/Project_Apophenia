@@ -9,7 +9,9 @@ from classes.object_classes.laser_class import Laser
 from classes.object_classes.enemy_classes import Enemy
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Wall_Tile, Default_Tile, Void_Tile
-from funcs.prom_func.Calc_coords_func import find_coords_on_board
+from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
+from classes.object_classes.base_class import base
+from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard
 
 
 def terminate():    # Закончить работу программы.
@@ -31,6 +33,10 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:  # Выпустить лазер, нажимая wasd, в соответствующие стороны из позиции курсора.
                 x, y = find_coords_on_board(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                 laser_x, laser_y = pygame.mouse.get_pos()
+                if event.key == pygame.K_SPACE:
+                    base.active_cannon.fire_laser(damage=10)
+                if event.key == pygame.K_c:
+                    deck_active.draw_card()
                 if event.key == pygame.K_s:
                     Laser(laser_x, laser_y, 90)
                 if event.key == pygame.K_w:
@@ -57,16 +63,25 @@ if __name__ == '__main__':
                     print(game_objects_board.board[y][x])
                     game_objects_board.del_object(game_objects_board.board[y][x])
 
-        all_sprite_group.update()  # Обновление всех спрайтов.
+        all_sprite_group.update(event)  # Обновление всех спрайтов.
 
         # Отрисовка спрайтов в правильном порядке.
         tiles_sprite_group.draw(screen)
+
+        base_sprite_group.draw(screen)
+
         mirror_sprite_group.draw(screen)
         texture_mirror_sprite_group.draw(screen)
+
         texture_enemy_sprite_group.draw(screen)
+
         laser_sprite_group.draw(screen)
         texture_laser_sprite_group.draw(screen)
+
+        cannon_sprite_group.draw(screen)
+
         description_sprite_group.draw(screen)
+        card_sprite_group.draw(screen)
         # tiles_board.render(screen)
         cursor_sprite_group.draw(screen)
 

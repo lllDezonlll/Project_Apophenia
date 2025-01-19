@@ -3,8 +3,8 @@ import pygame
 from Constant_files.SPRITE_GROUPS import all_sprite_group, laser_sprite_group, mirror_sprite_group, texture_laser_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT, FPS
 from classes.gui_classes.gui_classes import Following_Texture
-from funcs.prom_func.Load_func import load_image
-from funcs.prom_func.Calc_coords_func import find_coords_on_board
+from funcs.prom_funcs.Load_func import load_image
+from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
 
 
 # Класс атаки лазером.
@@ -13,19 +13,18 @@ class Laser(pygame.sprite.Sprite):
 
     def __init__(self, x, y, orientation, speed=900 / FPS, damage=1):
         super().__init__(all_sprite_group, laser_sprite_group)
-        self.x = x
-        self.y = y
+        self.x, self.y = find_coords_on_board(x, y)
         self.mirror = None
-        self.texture = Following_Texture(self, Laser.image, [all_sprite_group, texture_laser_sprite_group],
-                                         rotatable=True, offset_x=-30, offset_y=0)
         self.orientation = orientation  # Направление лазера (0, 90, 180, -90)
         self.speed = speed  # Скорость лазера
         self.damage = damage  # Урон от лазера
         self.image = pygame.Surface((8 * CELL_SIZE / 40, 8 * CELL_SIZE / 40), pygame.SRCALPHA, 32)  # Хитбокс для физики лазера.
         self.image.fill(pygame.Color('red'))
         self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
+        self.rect.x = x
+        self.rect.y = y
+        self.texture = Following_Texture(self, Laser.image, [all_sprite_group, texture_laser_sprite_group],
+                                         rotatable=True, offset_x=-30, offset_y=0)
 
     # Движение лазера.
     def move(self):
@@ -47,7 +46,7 @@ class Laser(pygame.sprite.Sprite):
         self.texture.kill()
         self.kill()
 
-    def update(self):
+    def update(self, event):
         # Вызов метода kill_self при условии, что лазера за пределами игрового поля.
         if (self.rect.x < BOARD_LEFT or self.rect.y < BOARD_TOP or
                 self.rect.x > BOARD_LEFT + CELL_SIZE * CELL_COUNT or self.rect.y > BOARD_TOP + CELL_SIZE * CELL_COUNT):

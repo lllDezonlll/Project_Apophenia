@@ -23,6 +23,9 @@ class Default_Tile(pygame.sprite.Sprite):
     def kill_self(self):
         self.kill()
 
+    def update(self, event):
+        pass
+
 
 # Пустой тайл. Просто клетка, на которой ничего нельзя расположить.
 class Void_Tile(Default_Tile):
@@ -39,7 +42,7 @@ class Wall_Tile(Default_Tile):
         self.laser = None
         pygame.draw.rect(self.image, pygame.Color((97, 117, 101)), (0, 0, CELL_SIZE, CELL_SIZE))
 
-    def update(self):
+    def update(self, event):
         # Получает урон от лазера и уничтожает его при касании.
         if laser := pygame.sprite.spritecollideany(self, laser_sprite_group):
             if laser != self.laser:
