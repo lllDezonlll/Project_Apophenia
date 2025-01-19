@@ -16,6 +16,7 @@ class Mirror(pygame.sprite.Sprite):
         self.x = x  # Координата X зеркала на клеточном поле.
         self.y = y  # Координата Y зеркала на клеточном поле.
         self.board = board  # Доска, к которой привязано зеркало.
+        self.board.print_objects()
 
         self.orientation = orientation  # Поворот зеркала.
         self.health = health  # Здоровье зеркала.
@@ -28,14 +29,14 @@ class Mirror(pygame.sprite.Sprite):
 
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=2, offset_y=-2)
+        self.board.add_object(self, del_previous=True)
         self.draw()
 
     # Получение урона.
     def take_damage(self, damage):
         self.health -= damage
         if self.health <= 0:
-            self.state = 'destroyed'
-            self.image.fill((255, 0, 0))  # Изменяем цвет на красный для визуализации разрушенного состояния
+            self.kill_self()
 
     # Восстановление здоровья.
     def heal(self, amount):
@@ -101,7 +102,7 @@ class Mirror(pygame.sprite.Sprite):
 
     def kill_self(self):
         self.texture.kill()
-        self.board.board[self.y][self.x] = '?'
+        self.rect.x, self.rect.y = 10000, 10000
         self.kill()
 
     def update(self, event):

@@ -77,15 +77,22 @@ class Game_Objects_Board(Board):
                     self.board[y][x] = Mirror(x, y, int(current_data[-3::]), self)
 
     def add_object(self, object, del_previous=False):
-        if del_previous:
-            self.del_object(object)
-        self.board[object.y][object.x] = object
+        try:
+            if del_previous:
+                self.del_object(self.board[object.y][object.x])
+            self.board[object.y][object.x] = object
+        except Exception:
+            pass
+
+
 
     def del_object(self, object):
         try:
-            self.board[object.y][object.x].kill_self()
+            self.board[object.y][object.x] = '?'
+            object.kill_self()
         except Exception:
             pass
+
 
 
 map = load_map('map.txt')  # Загрузка карты.

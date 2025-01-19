@@ -48,13 +48,13 @@ if __name__ == '__main__':
                 if event.key == pygame.K_f:
                     enemy.move()
                 if event.key == pygame.K_1:
-                    game_objects_board.add_object(Mirror(x, y, 0, game_objects_board), del_previous=True)
+                    Mirror(x, y, 0, game_objects_board)
                 if event.key == pygame.K_2:
-                    game_objects_board.add_object(Mirror(x, y, 90, game_objects_board), del_previous=True)
+                    Mirror(x, y, 90, game_objects_board)
                 if event.key == pygame.K_3:
-                    game_objects_board.add_object(Mirror(x, y, 180, game_objects_board), del_previous=True)
+                    Mirror(x, y, 180, game_objects_board)
                 if event.key == pygame.K_4:
-                    game_objects_board.add_object(Mirror(x, y, -90, game_objects_board), del_previous=True)
+                    Mirror(x, y, -90, game_objects_board)
                 if event.key == pygame.K_q:
                     tiles_board.add_tile(Default_Tile(x, y, tiles_board), del_previous=True)
                     game_objects_board.del_object(game_objects_board.board[y][x])

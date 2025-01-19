@@ -6,13 +6,14 @@ from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
 from classes.gui_classes.gui_classes import Following_Texture
 from classes.object_classes.tile_classes import Wall_Tile, Void_Tile
-from funcs.prom_func.Load_func import load_image
+from funcs.prom_funcs.Load_func import load_image
 import networkx as nx
+
 
 class Enemy(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
 
-    def __init__(self, x, y, objects_board, tiles_board, health=10, damage=1):
+    def __init__(self, x, y, objects_board, tiles_board, health=100, damage=1):
         super().__init__(all_sprite_group, object_sprite_group, enemy_sprite_group)
         self.x = x  # Координата X врага на клеточном поле.
         self.y = y  # Координата Y врага на клеточном поле.
@@ -105,15 +106,19 @@ class Enemy(pygame.sprite.Sprite):
             return []
 
     def move(self):
-        if self.target_mirror:
-            graph = self.create_graph()
-            start = (self.x, self.y)
-            goal = (self.target_mirror.x, self.target_mirror.y)
-            self.path = self.astar_path(graph, start, goal)
-            if self.path:
-                self.moving = True
+        try:
+            if self.target_mirror:
+                graph = self.create_graph()
+                start = (self.x, self.y)
+                goal = (self.target_mirror.x, self.target_mirror.y)
+                self.path = self.astar_path(graph, start, goal)
+                print(self.path)
+                if self.path:
+                    self.moving = True
+        except Exception:
+            pass
 
-    def update(self):
+    def update(self, *event):
         # Получает урон от лазера
         if laser := pygame.sprite.spritecollideany(self, laser_sprite_group):
             if laser != self.laser:
@@ -122,16 +127,20 @@ class Enemy(pygame.sprite.Sprite):
                 laser.kill_self()
 
         # Найти ближайшее зеркало
-        if not self.target_mirror:
+        if not self.target_mirror or len(self.target_mirror.groups()) == 0:
             self.target_mirror = self.find_nearest_mirror()
 
-        if self.moving:
+        if self.moving and len(self.path) > 1:
             self.move_towards_mirror()
             if not self.path:
                 self.moving = False
 
-        if self.x == self.target_mirror.x and self.y == self.target_mirror.y:
+        if len(self.path) == 1:
             self.target_mirror.take_damage(self.damage)
-            if self.target_mirror.health <= 0:
-                self.target_mirror.kill_self()
+
+        try:
+            if len(self.target_mirror.groups()) == 0:
                 self.target_mirror = None
+                self.path = []
+        except Exception:
+            pass
