@@ -15,7 +15,7 @@ class Base(pygame.sprite.Sprite):
         self.x = 8  # Координата X базы на клеточном поле.
         self.y = 8  # Координата Y базы на клеточном поле.
 
-        self.description = Base_description(1, 1500, 0, 420, 270, self)
+        self.description = Base_description(1, 1500, 28, 392, 266, self)
         self.cannons = cannons
         self.active_cannon = self.cannons[0]
         self.active_cannon.switch_activity(True)

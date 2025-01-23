@@ -9,7 +9,7 @@ from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
 
 # Класс атаки лазером.
 class Laser(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'test_laser.png')
+    image = load_image('data/textures', 'laser_test.png')
 
     def __init__(self, x, y, orientation, speed=900 / FPS, damage=1):
         super().__init__(all_sprite_group, laser_sprite_group)
@@ -24,7 +24,7 @@ class Laser(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.texture = Following_Texture(self, Laser.image, [all_sprite_group, texture_laser_sprite_group],
-                                         rotatable=True, offset_x=-30, offset_y=0)
+                                         rotatable=True, offset_x=-36, offset_y=-20)
 
     # Движение лазера.
     def move(self):

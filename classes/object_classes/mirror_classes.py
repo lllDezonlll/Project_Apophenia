@@ -9,7 +9,7 @@ from funcs.prom_funcs.Load_func import load_image
 
 # Класс обычного одностороннего зеркала с обычным 90-градусным отражением.
 class Mirror(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'test_mirror_orientation.png', colorkey=-1)
+    image = load_image('data/textures', 'mirror_test.png')
 
     def __init__(self, x, y, orientation, board, health=100, state='normal', unique_abilities=None):
         super().__init__(all_sprite_group, object_sprite_group, mirror_sprite_group)
@@ -28,7 +28,7 @@ class Mirror(pygame.sprite.Sprite):
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=2, offset_y=-2)
+        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=0, offset_y=0)
         self.board.add_object(self, del_previous=True)
         self.draw()
 

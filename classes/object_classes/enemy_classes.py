@@ -126,6 +126,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.take_damage(laser.damage)
                 laser.kill_self()
 
+        print(self.path)
+
         # Найти ближайшее зеркало
         if not self.target_mirror or len(self.target_mirror.groups()) == 0:
             self.target_mirror = self.find_nearest_mirror()
