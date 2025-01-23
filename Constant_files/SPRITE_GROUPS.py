@@ -20,3 +20,5 @@ base_sprite_group = pygame.sprite.Group()
 cannon_sprite_group = pygame.sprite.Group()
 
 card_sprite_group = pygame.sprite.Group()
+
+object_manager_sprite_group = pygame.sprite.Group()

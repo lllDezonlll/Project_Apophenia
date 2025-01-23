@@ -137,6 +137,8 @@ class Heal(Card):
             self.image.fill(pygame.SRCALPHA)
 
 
+
+
 deck_active.add_cards([Attack(), Attack(), Attack(), Attack(), Attack(), Heal(), Heal(), Heal(), Attack(), Attack(), Heal(), Attack(), Heal()])
 
 deck_active.draw_card(5)
