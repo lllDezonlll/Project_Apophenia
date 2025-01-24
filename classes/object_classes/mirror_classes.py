@@ -11,12 +11,11 @@ from funcs.prom_funcs.Load_func import load_image
 class Mirror(pygame.sprite.Sprite):
     image = load_image('data/textures', 'mirror_test.png')
 
-    def __init__(self, x, y, orientation, board, health=100, state='normal', unique_abilities=None):
+    def __init__(self, x, y, orientation, board, health=100, state='normal', unique_abilities=None, is_place_action=False):
         super().__init__(all_sprite_group, object_sprite_group, mirror_sprite_group)
         self.x = x  # Координата X зеркала на клеточном поле.
         self.y = y  # Координата Y зеркала на клеточном поле.
         self.board = board  # Доска, к которой привязано зеркало.
-        self.board.print_objects()
 
         self.orientation = orientation  # Поворот зеркала.
         self.health = health  # Здоровье зеркала.
@@ -27,9 +26,15 @@ class Mirror(pygame.sprite.Sprite):
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
+        if is_place_action:
+            self.rect.x = 10000
+
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=0, offset_y=0)
-        self.board.add_object(self, del_previous=True)
+        if not is_place_action:
+            self.board.add_object(self, del_previous=True)
+
+        self.board.print_objects()
         self.draw()
 
     # Получение урона.
@@ -102,6 +107,7 @@ class Mirror(pygame.sprite.Sprite):
 
     def kill_self(self):
         self.texture.kill()
+        self.board.del_object(self)
         self.rect.x, self.rect.y = 10000, 10000
         self.kill()
 

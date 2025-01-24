@@ -77,6 +77,8 @@ class Enemy(pygame.sprite.Sprite):
     def move_towards_mirror(self):
         if self.path:
             next_x, next_y = self.path.pop(0)
+            self.objects_board.board[self.y][self.x] = '?'
+            self.objects_board.board[next_y][next_x] = self
             self.x = next_x
             self.y = next_y
             self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
@@ -126,11 +128,8 @@ class Enemy(pygame.sprite.Sprite):
                 self.take_damage(laser.damage)
                 laser.kill_self()
 
-        print(self.path)
-
         # Найти ближайшее зеркало
-        if not self.target_mirror or len(self.target_mirror.groups()) == 0:
-            self.target_mirror = self.find_nearest_mirror()
+        self.target_mirror = self.find_nearest_mirror()
 
         if self.moving and len(self.path) > 1:
             self.move_towards_mirror()

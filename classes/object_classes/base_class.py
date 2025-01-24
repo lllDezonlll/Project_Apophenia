@@ -7,15 +7,16 @@ from classes.gui_classes.description_classes import Base_description
 from classes.object_classes.laser_class import Laser
 from classes.gui_classes.gui_classes import Following_Texture
 from funcs.prom_funcs.Load_func import load_image
+from Constant_files.CONSTANTS import BASE_DESCRIPTION_LEFT, BASE_DESCRIPTION_TOP
 
 
 class Base(pygame.sprite.Sprite):
     def __init__(self, cannons):
-        super().__init__(all_sprite_group, object_sprite_group, base_sprite_group)
+        super().__init__(all_sprite_group, base_sprite_group)
         self.x = 8  # Координата X базы на клеточном поле.
         self.y = 8  # Координата Y базы на клеточном поле.
 
-        self.description = Base_description(1, 1500, 28, 392, 266, self)
+        self.description = Base_description(1, BASE_DESCRIPTION_LEFT, BASE_DESCRIPTION_TOP, 396, 266, self)
         self.cannons = cannons
         self.active_cannon = self.cannons[0]
         self.active_cannon.switch_activity(True)
@@ -28,8 +29,6 @@ class Base(pygame.sprite.Sprite):
         self.rect = pygame.Rect(BOARD_LEFT + self.x * CELL_SIZE, BOARD_TOP + self.y * CELL_SIZE, self.width,
                                 self.height)  # Прямоугольник для взаимодействия.
         self.image.fill(pygame.Color('blue'))
-
-        self.hitbox = Hitbox(self)
 
     def take_damage(self, damage):
         self.health -= damage

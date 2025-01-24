@@ -1,5 +1,5 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group
+from Constant_files.SPRITE_GROUPS import all_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group
 from funcs.prom_funcs.Load_func import load_image
 from Constant_files.CONSTANT_OBJECTS import object_description, tile_description
 
@@ -50,8 +50,7 @@ class Cursor(pygame.sprite.Sprite):
         self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
         self.image.fill(pygame.Color('white'))
         self.rect = self.image.get_rect()
-        self.texture = Following_Texture(self, Cursor.image, self.groups(), offset_y=-3, offset_x=-3)
-
+        self.texture = Following_Texture(self, Cursor.image, [all_sprite_group, texture_cursor_sprite_group], offset_y=-3, offset_x=-3)
 
     def update(self, event):
         # Следование за системным курсором и обновления затрагиваемого описания.
@@ -63,7 +62,8 @@ class Cursor(pygame.sprite.Sprite):
     def update_description(self):
         if not pygame.sprite.spritecollideany(self, tiles_sprite_group):
             tile_description.set_default_description_image()
-        if not pygame.sprite.spritecollideany(self, object_sprite_group):
+        if (not pygame.sprite.spritecollideany(self, object_sprite_group) and not
+        pygame.sprite.spritecollideany(self, object_manager_sprite_group)):
             object_description.set_default_description_image()
 
 

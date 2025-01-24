@@ -12,7 +12,7 @@ from classes.object_classes.tile_classes import Wall_Tile, Default_Tile, Void_Ti
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
 from classes.object_classes.base_class import base
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard
-
+from classes.helper_classes.object_deck_classes import object_manager
 
 def terminate():    # Закончить работу программы.
     pygame.quit()
@@ -47,6 +47,10 @@ if __name__ == '__main__':
                     Laser(laser_x, laser_y, 0)
                 if event.key == pygame.K_f:
                     enemy.move()
+                if event.key == pygame.K_r:
+                    object_manager.rotate_objects('left')
+                if event.key == pygame.K_t:
+                    object_manager.rotate_objects('right')
                 if event.key == pygame.K_1:
                     Mirror(x, y, 0, game_objects_board)
                 if event.key == pygame.K_2:
@@ -82,8 +86,11 @@ if __name__ == '__main__':
 
         description_sprite_group.draw(screen)
         card_sprite_group.draw(screen)
+
+        object_manager_sprite_group.draw(screen)
         # tiles_board.render(screen)
         cursor_sprite_group.draw(screen)
+        texture_cursor_sprite_group.draw(screen)
 
         # Тик у таймера от фпс.
         clock.tick(FPS)

@@ -84,12 +84,11 @@ class Game_Objects_Board(Board):
         except Exception:
             pass
 
-
-
-    def del_object(self, object):
+    def del_object(self, object, kill_object=True):
         try:
             self.board[object.y][object.x] = '?'
-            object.kill_self()
+            if kill_object:
+                object.kill_self()
         except Exception:
             pass
 

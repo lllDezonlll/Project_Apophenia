@@ -12,7 +12,7 @@ class Default_Tile(pygame.sprite.Sprite):
         self.value = 0
         super().__init__(all_sprite_group, tiles_sprite_group)
         self.image = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA, 32)
-        pygame.draw.rect(self.image, pygame.Color((92, 88, 88)), (0, 0, CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(self.image, pygame.Color((55, 153, 124)), (0, 0, CELL_SIZE, CELL_SIZE))
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
         self.hitbox = Hitbox(self)
 
