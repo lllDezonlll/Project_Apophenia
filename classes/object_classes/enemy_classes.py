@@ -111,6 +111,7 @@ class Enemy(pygame.sprite.Sprite):
             pass
         else:
             self.target_mirror = self.find_nearest_mirror()
+
         try:
             if self.target_mirror:
                 graph = self.create_graph()
@@ -118,7 +119,7 @@ class Enemy(pygame.sprite.Sprite):
                 goal = (self.target_mirror.x, self.target_mirror.y)
                 self.next_move = self.astar_path(graph, start, goal)[0]
                 # if self.path:
-                    # self.moving = True
+                   # self.moving = True
                 # self.next_move = self.path.pop(0)
         except Exception:
             pass
@@ -162,6 +163,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.laser = laser
                 self.take_damage(laser.damage)
                 laser.kill_self()
+        # self.next_move_calculated()
 
         # Найти ближайшее зеркало
         # self.target_mirror = self.find_nearest_mirror()
