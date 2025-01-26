@@ -29,6 +29,8 @@ class Energy(pygame.sprite.Sprite):
         self.image = pygame.Surface((100, 100), pygame.SRCALPHA, 32)
         self.image.blit(self.font.render(str(self.current_count), 1, pygame.Color('blue')), (10, 10, self.rect.w, self.rect.h))
 
+energy = Energy(3)
+
 
 class Deck_Active:
     def __init__(self):
@@ -94,6 +96,7 @@ class Card(pygame.sprite.Sprite):
     def __init__(self, deck=deck_active):
         super().__init__(game_sprite_group, card_sprite_group)
         self.deck = deck
+        self.cost = 0
         self.mouse_down = False
         self.image = pygame.Surface((396, 48), pygame.SRCALPHA, 32)
         self.image.fill(pygame.Color('red'))
@@ -117,8 +120,9 @@ class Card(pygame.sprite.Sprite):
         if not self.mouse_down:
             return
 
-        if not pygame.mouse.get_pressed()[0] and pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand and self.mouse_down:
+        if not pygame.mouse.get_pressed()[0] and pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand and self.mouse_down and energy.current_count >= self.cost:
             self.play()
+            energy.spend_energy(self.cost)
             self.change_deck(deck_discard)
             self.mouse_down = False
 
@@ -134,6 +138,7 @@ class Card(pygame.sprite.Sprite):
 class Attack(Card):
     def __init__(self):
         super().__init__(deck=deck_active)
+        self.cost = 1
 
     def play(self):
         base.active_cannon.fire_laser(damage=10)
@@ -143,6 +148,7 @@ class Attack(Card):
 class Heal(Card):
     def __init__(self):
         super().__init__(deck=deck_active)
+        self.cost = 2
 
     def play(self):
         base.heal(5)
@@ -160,7 +166,3 @@ class Heal(Card):
 
 
 deck_active.add_cards([Attack(), Attack(), Attack(), Attack(), Attack(), Heal(), Heal(), Heal(), Attack(), Attack(), Heal(), Attack(), Heal()])
-
-
-
-energy = Energy(3)

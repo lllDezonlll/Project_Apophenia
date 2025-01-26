@@ -151,7 +151,6 @@ class Enemy(pygame.sprite.Sprite):
         except nx.NetworkXNoPath:
             return []
 
-
     def update(self, *event):
         # Получает урон от лазера
         if laser := pygame.sprite.spritecollideany(self, laser_sprite_group):
@@ -159,5 +158,3 @@ class Enemy(pygame.sprite.Sprite):
                 self.laser = laser
                 self.take_damage(laser.damage)
                 laser.kill_self()
-
-        self.next_move_calculated()

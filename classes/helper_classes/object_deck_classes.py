@@ -43,6 +43,7 @@ class Object_manager(pygame.sprite.Sprite):
                 object.rotate_object(90)
             else:
                 object.rotate_object(-90)
+
     def update(self, *event):
         self.show_objects()
 
@@ -95,7 +96,7 @@ class Place_action(pygame.sprite.Sprite):
             x, y = find_coords_on_board(*pygame.mouse.get_pos())
             self.mouse_down = False
 
-            if x not in range(19) or y not in range(19):
+            if x not in range(19) or y not in range(19) or (x in range(8, 11) and y in range(8, 11)):
                 return None, None
 
             return x, y

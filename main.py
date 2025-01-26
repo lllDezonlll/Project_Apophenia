@@ -45,12 +45,10 @@ def main_menu():
                 terminate()
 
             running = not play_button.update()
-            try:
-                cursor_sprite_group.update(event)
-                texture_cursor_sprite_group.update(event)
-                parallax_image_sprite_group.update(event)
-            except Exception:
-                pass
+
+            cursor_sprite_group.update(1)
+            texture_cursor_sprite_group.update(1)
+            parallax_image_sprite_group.update(1)
 
             main_menu_sprite_group.draw(screen)
 
@@ -114,25 +112,23 @@ def game():
                     if event.key == pygame.K_e:
                         tiles_board.add_tile(Wall(x, y, game_objects_board), del_previous=True)
 
-            try:
-                if pause:
-                    result = pause_menu(current_turn)
-                    pause, return_to_main_menu = not result[0], result[1]
-                    # print(pause)
-                else:
-                    if end_turn_button.update():
-                        current_turn = 'Enemy'
-                        next_turn_init = True
+            if pause:
+                result = pause_menu(current_turn)
+                pause, return_to_main_menu = not result[0], result[1]
+                print(1)
+            else:
+                if end_turn_button.update():
+                    current_turn = 'Enemy'
+                    next_turn_init = True
 
-                    if current_turn == 'Enemy':
-                        for sprite in enemy_sprite_group.sprites().copy():
-                            sprite.do_action()
+                if current_turn == 'Enemy':
+                    for sprite in enemy_sprite_group.sprites().copy():
+                        sprite.do_action()
+                        sprite.next_move_calculated()
 
-                        game_objects_board.print_objects()
+                    game_objects_board.print_objects()
 
-                    game_sprite_group.update(current_turn)  # Обновление всех спрайтов.
-            except IndexError:
-                pass
+                game_sprite_group.update(current_turn)  # Обновление всех спрайтов.
 
             if return_to_main_menu:
                 running = False
@@ -141,6 +137,7 @@ def game():
                 for card in deck_hand.cards.copy():
                     deck_hand.discard_card(card)
                 deck_active.draw_card(5)
+                energy.return_to_default_count()
                 next_turn_init = False
 
 
@@ -170,7 +167,6 @@ def game():
 
             object_manager_sprite_group.draw(screen)
             any_texture_sprite_group.draw(screen)
-
 
             if pause:
                 pause_menu_sprite_group.draw(screen)
@@ -202,6 +198,7 @@ def pause_menu(event):
 
 enemy1 = Enemy(5, 10, game_objects_board, tiles_board)
 enemy2 = Enemy(16, 16, game_objects_board, tiles_board)
+enemy3 = Enemy(4, 16, game_objects_board, tiles_board)
 end_turn_button = Button(1500, 950, 1, [any_texture_sprite_group])
 
 main_menu()

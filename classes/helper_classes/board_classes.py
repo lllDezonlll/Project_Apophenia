@@ -85,16 +85,21 @@ class Game_Objects_Board(Board):
                 self.del_object(self.board[object.y][object.x])
             self.board[object.y][object.x] = object
 
+            for sprite in enemy_sprite_group.sprites().copy():
+                sprite.next_move_calculated()
+
         except Exception:
             pass
 
 
-    def del_object(self, object, kill_object=True):
+    def del_object(self, object, kill_object=False):
         try:
             self.board[object.y][object.x] = '?'
+            for sprite in enemy_sprite_group.sprites().copy():
+                sprite.next_move_calculated()
             if kill_object:
                 object.kill_self()
-        except Exception:
+        except AttributeError:
             pass
 
 
