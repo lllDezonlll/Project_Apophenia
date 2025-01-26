@@ -113,7 +113,7 @@ def game():
                 if pause:
                     result = pause_menu(event)
                     pause, return_to_main_menu = not result[0], result[1]
-                    print(pause)
+                    # print(pause)
                 else:
                     game_sprite_group.update(pygame.event.get())  # Обновление всех спрайтов.
             except Exception:

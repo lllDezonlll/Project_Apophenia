@@ -32,6 +32,7 @@ class Board:
                                                            self.cell_size, self.cell_size), width=width)
 
     def print_objects(self):
+        print(type(self))
         print(self.board)
 
 

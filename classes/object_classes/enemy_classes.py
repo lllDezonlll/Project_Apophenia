@@ -36,6 +36,7 @@ class Enemy(pygame.sprite.Sprite):
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Enemy.image, [game_sprite_group, texture_enemy_sprite_group])
         self.draw()
+        self.next_move_calculated()
 
     # Получение урона.
     def take_damage(self, damage):
@@ -66,18 +67,27 @@ class Enemy(pygame.sprite.Sprite):
         self.kill()
 
     def find_nearest_mirror(self):
-        nearest_mirror = None
+        graph = self.create_graph()
+        start = (self.x, self.y)
         min_distance = float('inf')
+        nearest_mirror = None
+
         for mirror in mirror_sprite_group:
-            distance = ((mirror.x - self.x) ** 2 + (mirror.y - self.y) ** 2) ** 0.5
-            if distance < min_distance:
-                min_distance = distance
-                nearest_mirror = mirror
+            goal = (mirror.x, mirror.y)
+            try:
+                path = nx.dijkstra_path(graph, start, goal)
+                distance = len(path) - 1
+                if distance < min_distance:
+                    min_distance = distance
+                    nearest_mirror = mirror
+            except nx.NetworkXNoPath:
+                continue
+
         return nearest_mirror
 
     def move_towards_mirror(self):
         if self.path:
-            next_x, next_y = self.path.pop(0)
+            next_x, next_y = self.next_move
             self.objects_board.board[self.y][self.x] = '?'
             self.objects_board.board[next_y][next_x] = self
             self.x = next_x
@@ -92,6 +102,29 @@ class Enemy(pygame.sprite.Sprite):
             return False
         return True
 
+    def next_move_calculated(self):
+        # Найти ближайшее зеркало
+        try:
+            if len(self.target_mirror.groups()) == 0:
+                self.target_mirror = None
+        except Exception:
+            pass
+        else:
+            self.target_mirror = self.find_nearest_mirror()
+        try:
+            if self.target_mirror:
+                graph = self.create_graph()
+                start = (self.x, self.y)
+                goal = (self.target_mirror.x, self.target_mirror.y)
+                self.next_move = self.astar_path(graph, start, goal)[0]
+                # if self.path:
+                    # self.moving = True
+                # self.next_move = self.path.pop(0)
+        except Exception:
+            pass
+
+
+
     def create_graph(self):
         graph = nx.grid_2d_graph(CELL_COUNT, CELL_COUNT)
         nodes_to_remove = []
@@ -104,6 +137,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def astar_path(self, graph, start, goal):
         try:
+            print(nx.astar_path(graph, start, goal))
             return nx.astar_path(graph, start, goal)
         except nx.NetworkXNoPath:
             return []
@@ -116,8 +150,8 @@ class Enemy(pygame.sprite.Sprite):
                 goal = (self.target_mirror.x, self.target_mirror.y)
                 self.path = self.astar_path(graph, start, goal)
                 print(self.path)
-                if self.path:
-                    self.moving = True
+                # if self.path:
+                    # self.moving = True
         except Exception:
             pass
 
@@ -130,19 +164,12 @@ class Enemy(pygame.sprite.Sprite):
                 laser.kill_self()
 
         # Найти ближайшее зеркало
-        self.target_mirror = self.find_nearest_mirror()
+        # self.target_mirror = self.find_nearest_mirror()
 
-        if self.moving and len(self.path) > 1:
-            self.move_towards_mirror()
-            if not self.path:
-                self.moving = False
+        # if self.moving and len(self.path) > 1:
+            # self.move_towards_mirror()
+            # if not self.path:
+                # self.moving = False
 
-        if len(self.path) == 1:
-            self.target_mirror.take_damage(self.damage)
-
-        try:
-            if len(self.target_mirror.groups()) == 0:
-                self.target_mirror = None
-                self.path = []
-        except Exception:
-            pass
+        # if len(self.path) == 1:
+          #  self.target_mirror.take_damage(self.damage)
