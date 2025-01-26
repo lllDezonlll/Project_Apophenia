@@ -1,6 +1,7 @@
 from classes.object_classes.tile_classes import Default_Tile, Void_Tile
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.wall_classes import Wall
+from Constant_files.SPRITE_GROUPS import enemy_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT
 from funcs.prom_funcs.Load_func import load_map
 import pygame
@@ -83,8 +84,10 @@ class Game_Objects_Board(Board):
             if del_previous:
                 self.del_object(self.board[object.y][object.x])
             self.board[object.y][object.x] = object
+
         except Exception:
             pass
+
 
     def del_object(self, object, kill_object=True):
         try:

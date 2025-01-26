@@ -96,8 +96,6 @@ def game():
                         Laser(laser_x, laser_y, 180)
                     if event.key == pygame.K_d:
                         Laser(laser_x, laser_y, 0)
-                    if event.key == pygame.K_f:
-                        enemy.move()
                     if event.key == pygame.K_r:
                         object_manager.rotate_objects('left')
                     if event.key == pygame.K_t:
@@ -127,12 +125,14 @@ def game():
                         next_turn_init = True
 
                     if current_turn == 'Enemy':
-                        enemy.move(current_turn)
+                        for sprite in enemy_sprite_group.sprites().copy():
+                            sprite.do_action()
+
+                        game_objects_board.print_objects()
 
                     game_sprite_group.update(current_turn)  # Обновление всех спрайтов.
-            except Exception:
+            except IndexError:
                 pass
-
 
             if return_to_main_menu:
                 running = False
@@ -187,7 +187,6 @@ def game():
 
             current_turn = 'Player'
 
-
         else:
             main_menu()
 
@@ -201,7 +200,8 @@ def pause_menu(event):
     return pause_play_button.update(), return_to_main_menu
 
 
-enemy = Enemy(5, 10, game_objects_board, tiles_board)
+enemy1 = Enemy(5, 10, game_objects_board, tiles_board)
+enemy2 = Enemy(16, 16, game_objects_board, tiles_board)
 end_turn_button = Button(1500, 950, 1, [any_texture_sprite_group])
 
 main_menu()
