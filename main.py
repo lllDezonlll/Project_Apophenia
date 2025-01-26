@@ -120,7 +120,7 @@ def game():
                 if pause:
                     result = pause_menu(current_turn)
                     pause, return_to_main_menu = not result[0], result[1]
-                    print(pause)
+                    # print(pause)
                 else:
                     if end_turn_button.update():
                         current_turn = 'Enemy'
