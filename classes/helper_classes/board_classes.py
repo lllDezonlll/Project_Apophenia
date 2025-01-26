@@ -1,5 +1,6 @@
-from classes.object_classes.tile_classes import Default_Tile, Void_Tile, Wall_Tile
+from classes.object_classes.tile_classes import Default_Tile, Void_Tile
 from classes.object_classes.mirror_classes import Mirror
+from classes.object_classes.wall_classes import Wall
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT
 from funcs.prom_funcs.Load_func import load_map
 import pygame
@@ -48,8 +49,6 @@ class Tiles_Board(Board):
                     self.board[y][x] = Default_Tile(x, y, self)
                 elif current_data == 'void_tile':
                     self.board[y][x] = Void_Tile(x, y, self)
-                elif current_data == 'wall_tile':
-                    self.board[y][x] = Wall_Tile(x, y, self)
 
     def add_tile(self, tile, del_previous=False):
         if del_previous:
@@ -75,6 +74,8 @@ class Game_Objects_Board(Board):
                 current_data = current_map[y][x][1]
                 if 'mirror' in current_data:
                     self.board[y][x] = Mirror(x, y, int(current_data[-3::]), self)
+                elif current_data == 'wall':
+                    self.board[y][x] = Wall(x, y, self)
 
     def add_object(self, object, del_previous=False):
         try:

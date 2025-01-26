@@ -1,11 +1,11 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, description_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, description_sprite_group
 
 
 # Базовый и удобный класс полей с описанием чего-то.
 class Description(pygame.sprite.Sprite):
     def __init__(self, image, x, y, width, height):
-        super().__init__(all_sprite_group, description_sprite_group)
+        super().__init__(game_sprite_group, description_sprite_group)
         self.width, self.height = width, height
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self.set_default_description_image()

@@ -1,14 +1,16 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, object_manager_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, object_manager_sprite_group
 from Constant_files.CONSTANTS import OBJECT_MANAGER_LEFT, OBJECT_MANAGER_TOP
 from classes.object_classes.mirror_classes import Mirror
+from classes.object_classes.wall_classes import Wall
 from classes.helper_classes.board_classes import game_objects_board
 from classes.helper_classes.hitbox_classes import Hitbox
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
 
+
 class Object_manager(pygame.sprite.Sprite):
     def __init__(self):
-        super().__init__(all_sprite_group, object_manager_sprite_group)
+        super().__init__(game_sprite_group, object_manager_sprite_group)
         self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
         self.rect = self.image.get_rect()
         self.max_object_count = 21
@@ -54,11 +56,12 @@ object_manager = Object_manager()
 
 
 class Place_action(pygame.sprite.Sprite):
-    def __init__(self, object):
-        super().__init__(all_sprite_group, object_manager_sprite_group)
+    def __init__(self, object, has_orientation=True):
+        super().__init__(game_sprite_group, object_manager_sprite_group)
         self.object_manager = object_manager
         self.mouse_down = False
         self.object = object
+        self.has_orientation = has_orientation
         self.selected = False
         self.image = type(object).image
         self.default_image = self.image
@@ -79,7 +82,10 @@ class Place_action(pygame.sprite.Sprite):
     def do_action(self):
         x, y = self.check_click()
         if not x is None and not y is None and game_objects_board.board[y][x] == '?':
-            type(self.object)(x, y, self.object.orientation, game_objects_board)
+            if self.has_orientation:
+                type(self.object)(x, y, self.object.orientation, game_objects_board)
+            else:
+                type(self.object)(x, y, game_objects_board)
 
     def check_click(self):
         if pygame.mouse.get_pressed()[0]:
@@ -98,6 +104,8 @@ class Place_action(pygame.sprite.Sprite):
         return None, None
 
     def rotate_object(self, angle):
+        if not self.has_orientation:
+            return
         self.object.orientation = self.object.orientation + angle
         if self.object.orientation == 270:
             self.object.orientation = -90
@@ -115,7 +123,7 @@ class Place_action(pygame.sprite.Sprite):
 
 class Manipulate_action(pygame.sprite.Sprite):
     def __init__(self, manipulate_x, manipulate_y):
-        super().__init__(all_sprite_group, object_manager_sprite_group)
+        super().__init__(game_sprite_group, object_manager_sprite_group)
         self.image = pygame.Surface((48, 48), pygame.SRCALPHA, 32)
         self.manipulate_x, self.manipulate_y = manipulate_x, manipulate_y
         self.mouse_down = False
@@ -187,6 +195,7 @@ class Manipulate_action(pygame.sprite.Sprite):
 
 
 object_manager.add_objects([Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
+                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
                             Manipulate_action(1, 0),
                             Manipulate_action(-1, 0),
                             Manipulate_action(0, 1),

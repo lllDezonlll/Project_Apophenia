@@ -1,11 +1,12 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import (all_sprite_group, object_sprite_group, enemy_sprite_group, laser_sprite_group,
+from Constant_files.SPRITE_GROUPS import (game_sprite_group, object_sprite_group, enemy_sprite_group, laser_sprite_group,
                                           texture_enemy_sprite_group, mirror_sprite_group)
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT
 from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
 from classes.gui_classes.gui_classes import Following_Texture
-from classes.object_classes.tile_classes import Wall_Tile, Void_Tile
+from classes.object_classes.tile_classes import Void_Tile
+from classes.object_classes.wall_classes import Wall
 from funcs.prom_funcs.Load_func import load_image
 import networkx as nx
 
@@ -14,7 +15,7 @@ class Enemy(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
 
     def __init__(self, x, y, objects_board, tiles_board, health=100, damage=1):
-        super().__init__(all_sprite_group, object_sprite_group, enemy_sprite_group)
+        super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
         self.x = x  # Координата X врага на клеточном поле.
         self.y = y  # Координата Y врага на клеточном поле.
         self.tiles_board = tiles_board  # Доска Тайлов
@@ -33,7 +34,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Enemy.image, [all_sprite_group, texture_enemy_sprite_group])
+        self.texture = Following_Texture(self, Enemy.image, [game_sprite_group, texture_enemy_sprite_group])
         self.draw()
 
     # Получение урона.
@@ -87,7 +88,7 @@ class Enemy(pygame.sprite.Sprite):
     def can_move(self, x, y):
         if x < 0 or x >= CELL_COUNT or y < 0 or y >= CELL_COUNT:
             return False
-        if isinstance(self.tiles_board.board[y][x], (Wall_Tile, Void_Tile)):
+        if isinstance(self.tiles_board.board[y][x], (Wall, Void_Tile)):
             return False
         return True
 
@@ -95,7 +96,7 @@ class Enemy(pygame.sprite.Sprite):
         graph = nx.grid_2d_graph(CELL_COUNT, CELL_COUNT)
         nodes_to_remove = []
         for (x, y) in graph.nodes:
-            if isinstance(self.tiles_board.board[y][x], (Wall_Tile, Void_Tile)):
+            if isinstance(self.tiles_board.board[y][x], (Wall, Void_Tile)):
                 nodes_to_remove.append((x, y))
         for node in nodes_to_remove:
             graph.remove_node(node)

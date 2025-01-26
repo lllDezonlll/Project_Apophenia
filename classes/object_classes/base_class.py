@@ -1,6 +1,6 @@
 import pygame
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
-from Constant_files.SPRITE_GROUPS import all_sprite_group, object_sprite_group, base_sprite_group, laser_sprite_group, cannon_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, object_sprite_group, base_sprite_group, laser_sprite_group, cannon_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.helper_classes.hitbox_classes import Hitbox
 from classes.gui_classes.description_classes import Base_description
@@ -12,7 +12,7 @@ from Constant_files.CONSTANTS import BASE_DESCRIPTION_LEFT, BASE_DESCRIPTION_TOP
 
 class Base(pygame.sprite.Sprite):
     def __init__(self, cannons):
-        super().__init__(all_sprite_group, base_sprite_group)
+        super().__init__(game_sprite_group, base_sprite_group)
         self.x = 8  # Координата X базы на клеточном поле.
         self.y = 8  # Координата Y базы на клеточном поле.
 
@@ -73,7 +73,7 @@ class Cannon(pygame.sprite.Sprite):
     disabled_cannon = load_image('data/textures', 'test_cannon_disabled.png', colorkey=-1)
 
     def __init__(self, x, y, orientation):
-        super().__init__(all_sprite_group, cannon_sprite_group)
+        super().__init__(game_sprite_group, cannon_sprite_group)
         self.x = x  # Координата X пушки на клеточном поле.
         self.y = y  # Координата Y пушки на клеточном поле.
 

@@ -1,5 +1,5 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, object_sprite_group, mirror_sprite_group, texture_mirror_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, object_sprite_group, mirror_sprite_group, texture_mirror_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
@@ -12,7 +12,7 @@ class Mirror(pygame.sprite.Sprite):
     image = load_image('data/textures', 'mirror_test.png')
 
     def __init__(self, x, y, orientation, board, health=100, state='normal', unique_abilities=None, is_place_action=False):
-        super().__init__(all_sprite_group, object_sprite_group, mirror_sprite_group)
+        super().__init__(game_sprite_group, object_sprite_group, mirror_sprite_group)
         self.x = x  # Координата X зеркала на клеточном поле.
         self.y = y  # Координата Y зеркала на клеточном поле.
         self.board = board  # Доска, к которой привязано зеркало.
@@ -30,7 +30,7 @@ class Mirror(pygame.sprite.Sprite):
             self.rect.x = 10000
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Mirror.image, [all_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=0, offset_y=0)
+        self.texture = Following_Texture(self, Mirror.image, [game_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=0, offset_y=0)
         if not is_place_action:
             self.board.add_object(self, del_previous=True)
 

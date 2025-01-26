@@ -1,8 +1,11 @@
 import pygame
 # здесь объявляются все группы спрайтов
-all_sprite_group = pygame.sprite.Group()
+game_sprite_group = pygame.sprite.Group()
 mirror_sprite_group = pygame.sprite.Group()
 tiles_sprite_group = pygame.sprite.Group()
+
+wall_sprite_group = pygame.sprite.Group()
+
 object_sprite_group = pygame.sprite.Group()
 laser_sprite_group = pygame.sprite.Group()
 enemy_sprite_group = pygame.sprite.Group()
@@ -24,3 +27,7 @@ cannon_sprite_group = pygame.sprite.Group()
 card_sprite_group = pygame.sprite.Group()
 
 object_manager_sprite_group = pygame.sprite.Group()
+
+main_menu_sprite_group = pygame.sprite.Group()
+
+pause_menu_sprite_group = pygame.sprite.Group()

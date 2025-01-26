@@ -1,6 +1,6 @@
 import pygame
 from classes.object_classes.base_class import base
-from Constant_files.SPRITE_GROUPS import all_sprite_group, card_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, card_sprite_group
 from random import randrange
 from classes.gui_classes.gui_classes import cursor
 from Constant_files.CONSTANTS import LEFT_INTERFACE_LEFT, LEFT_INTERFACE_TOP
@@ -28,7 +28,7 @@ class Deck_Active:
 
 class Deck_Hand(pygame.sprite.Sprite):
     def __init__(self):
-        super().__init__(all_sprite_group)
+        super().__init__(game_sprite_group)
         self.cards = []
         pass
 
@@ -70,7 +70,7 @@ deck_discard = Deck_Discard()
 
 class Card(pygame.sprite.Sprite):
     def __init__(self, deck=deck_active):
-        super().__init__(all_sprite_group, card_sprite_group)
+        super().__init__(game_sprite_group, card_sprite_group)
         self.deck = deck
         self.mouse_down = False
         self.image = pygame.Surface((396, 48), pygame.SRCALPHA, 32)
@@ -86,22 +86,19 @@ class Card(pygame.sprite.Sprite):
         self.deck = deck
 
     def check_click_to_play(self, event):
-        if event and event[0].type == pygame.MOUSEBUTTONDOWN:
-            if event[0].button == pygame.BUTTON_LEFT:
-                self.mouse_down = True
+        if pygame.mouse.get_pressed()[0]:
+            self.mouse_down = True
 
-        if event and event[0].type == pygame.MOUSEBUTTONUP and not pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand:
-            if event[0].button == pygame.BUTTON_LEFT:
-                self.mouse_down = False
+        if not pygame.mouse.get_pressed()[0] and not pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand:
+            self.mouse_down = False
 
         if not self.mouse_down:
             return
 
-        if event and event[0].type == pygame.MOUSEBUTTONUP and pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand and self.mouse_down:
-            if event[0].button == pygame.BUTTON_LEFT:
-                self.play()
-                self.change_deck(deck_discard)
-                self.mouse_down = False
+        if not pygame.mouse.get_pressed()[0] and pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand and self.mouse_down:
+            self.play()
+            self.change_deck(deck_discard)
+            self.mouse_down = False
 
     def update(self, *event):
         self.check_click_to_play(event)

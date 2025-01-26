@@ -1,6 +1,6 @@
 import pygame
 
-from Constant_files.SPRITE_GROUPS import all_sprite_group, laser_sprite_group, mirror_sprite_group, texture_laser_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, laser_sprite_group, mirror_sprite_group, texture_laser_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT, FPS
 from classes.gui_classes.gui_classes import Following_Texture
 from funcs.prom_funcs.Load_func import load_image
@@ -12,7 +12,7 @@ class Laser(pygame.sprite.Sprite):
     image = load_image('data/textures', 'laser_test.png')
 
     def __init__(self, x, y, orientation, speed=900 / FPS, damage=1):
-        super().__init__(all_sprite_group, laser_sprite_group)
+        super().__init__(game_sprite_group, laser_sprite_group)
         self.x, self.y = find_coords_on_board(x, y)
         self.mirror = None
         self.orientation = orientation  # Направление лазера (0, 90, 180, -90)
@@ -23,7 +23,7 @@ class Laser(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.texture = Following_Texture(self, Laser.image, [all_sprite_group, texture_laser_sprite_group],
+        self.texture = Following_Texture(self, Laser.image, [game_sprite_group, texture_laser_sprite_group],
                                          rotatable=True, offset_x=-36, offset_y=-20)
 
     # Движение лазера.

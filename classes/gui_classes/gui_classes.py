@@ -1,5 +1,5 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group
 from funcs.prom_funcs.Load_func import load_image
 from Constant_files.CONSTANT_OBJECTS import object_description, tile_description
 
@@ -46,11 +46,11 @@ class Cursor(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_cursor.png')
 
     def __init__(self):
-        super().__init__(all_sprite_group, cursor_sprite_group)
+        super().__init__(game_sprite_group, cursor_sprite_group)
         self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
         self.image.fill(pygame.Color('white'))
         self.rect = self.image.get_rect()
-        self.texture = Following_Texture(self, Cursor.image, [all_sprite_group, texture_cursor_sprite_group], offset_y=-3, offset_x=-3)
+        self.texture = Following_Texture(self, Cursor.image, [game_sprite_group, texture_cursor_sprite_group], offset_y=-3, offset_x=-3)
 
     def update(self, event):
         # Следование за системным курсором и обновления затрагиваемого описания.
@@ -69,3 +69,32 @@ class Cursor(pygame.sprite.Sprite):
 
 cursor = Cursor()   # Создание курсора.
 
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, groups):
+        super().__init__(*groups)
+        self.mouse_down = False
+        self.image = pygame.Surface((300, 100), pygame.SRCALPHA, 32)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = x, y
+        self.image.fill('green')
+
+    def check_click(self):
+        if pygame.mouse.get_pressed()[0]:
+            self.mouse_down = True
+
+        if not pygame.mouse.get_pressed()[0] and not pygame.sprite.collide_mask(self, cursor):
+            self.mouse_down = False
+
+        if not self.mouse_down:
+            return False
+
+        if not pygame.mouse.get_pressed()[0] and pygame.sprite.collide_mask(self, cursor) and self.mouse_down:
+            self.mouse_down = False
+            return True
+
+        return False
+
+    def update(self):
+
+        return self.check_click()

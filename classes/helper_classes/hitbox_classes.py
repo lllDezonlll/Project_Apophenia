@@ -1,11 +1,11 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import all_sprite_group, hitbox_sprite_group, cursor_sprite_group, object_manager_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, hitbox_sprite_group, cursor_sprite_group, object_manager_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT, OBJECT_MANAGER_LEFT, OBJECT_MANAGER_TOP
 
 # Класс игровых хитбоксов.
 class Hitbox(pygame.sprite.Sprite):
     def __init__(self, object, clickable=False, is_manipulate_action=False):
-        super().__init__(all_sprite_group, hitbox_sprite_group)
+        super().__init__(game_sprite_group, hitbox_sprite_group)
         self.object = object
         self.clickable = clickable
         self.is_manipulate_action = is_manipulate_action
