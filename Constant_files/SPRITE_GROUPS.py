@@ -31,3 +31,9 @@ object_manager_sprite_group = pygame.sprite.Group()
 main_menu_sprite_group = pygame.sprite.Group()
 
 pause_menu_sprite_group = pygame.sprite.Group()
+
+parallax_image_sprite_group = pygame.sprite.Group()
+
+any_texture_sprite_group = pygame.sprite.Group()
+
+energy_sprite_group = pygame.sprite.Group()

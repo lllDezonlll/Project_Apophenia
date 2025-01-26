@@ -8,6 +8,7 @@ class Description(pygame.sprite.Sprite):
         super().__init__(game_sprite_group, description_sprite_group)
         self.width, self.height = width, height
         self.rect = pygame.Rect(x, y, self.width, self.height)
+        self.font = pygame.font.Font(None, 20)
         self.set_default_description_image()
 
     # Устанавливает изображение по умолчанию, поверх которого выводится информация.
@@ -32,8 +33,7 @@ class Tile_description(Description):
     # Вывод информации.
     def display_tile_info(self):
         self.set_default_description_image()
-        font = pygame.font.Font(None, 20)
-        self.image.blit(font.render(type(self.tile).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
+        self.image.blit(self.font.render(type(self.tile).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
 
     def update(self, event):
         if self.tile is None:
@@ -54,11 +54,10 @@ class Object_descriptiom(Description):
     # Вывод информации.
     def display_object_info(self):
         self.set_default_description_image()
-        font = pygame.font.Font(None, 20)
-        self.image.blit(font.render(type(self.object).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
-        self.image.blit(font.render(str(self.object.health) + 'HP', 1, pygame.Color('red')), (10, 50, self.width, self.height))
+        self.image.blit(self.font.render(type(self.object).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
+        self.image.blit(self.font.render(str(self.object.health) + 'HP', 1, pygame.Color('red')), (10, 50, self.width, self.height))
         if type(self.object).__name__ == 'Mirror':
-            self.image.blit(font.render(str(self.object.orientation) + ' Orientation', 1, pygame.Color('red')), (10, 90, self.width, self.height))
+            self.image.blit(self.font.render(str(self.object.orientation) + ' Orientation', 1, pygame.Color('red')), (10, 90, self.width, self.height))
 
     def update(self, event):
         if self.object is None:
@@ -73,9 +72,8 @@ class Base_description(Description):
 
     def display_object_info(self):
         self.set_default_description_image()
-        font = pygame.font.Font(None, 20)
-        self.image.blit(font.render(type(self.object).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
-        self.image.blit(font.render(str(self.object.health) + 'HP', 1, pygame.Color('red')), (10, 50, self.width, self.height))
+        self.image.blit(self.font.render(type(self.object).__name__, 1, pygame.Color('red')), (10, 10, self.width, self.height))
+        self.image.blit(self.font.render(str(self.object.health) + 'HP', 1, pygame.Color('red')), (10, 50, self.width, self.height))
 
     def update(self, event):
         self.display_object_info()

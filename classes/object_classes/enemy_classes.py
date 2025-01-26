@@ -14,7 +14,7 @@ import networkx as nx
 class Enemy(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
 
-    def __init__(self, x, y, objects_board, tiles_board, health=100, damage=1):
+    def __init__(self, x, y, objects_board, tiles_board, health=100, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
         self.x = x  # Координата X врага на клеточном поле.
         self.y = y  # Координата Y врага на клеточном поле.
@@ -25,7 +25,6 @@ class Enemy(pygame.sprite.Sprite):
         self.laser = None
         self.target_mirror = None  # Инициализация целевого зеркала
         self.path = []  # Путь для движения
-        self.moving = False  # Флаг для отслеживания движения
 
         self.health = health  # Здоровье врага.
         self.width = CELL_SIZE  # Ширина врага.
@@ -102,13 +101,14 @@ class Enemy(pygame.sprite.Sprite):
             graph.remove_node(node)
         return graph
 
+
     def astar_path(self, graph, start, goal):
         try:
             return nx.astar_path(graph, start, goal)
         except nx.NetworkXNoPath:
             return []
 
-    def move(self):
+    def move(self, turn):
         try:
             if self.target_mirror:
                 graph = self.create_graph()
@@ -116,8 +116,13 @@ class Enemy(pygame.sprite.Sprite):
                 goal = (self.target_mirror.x, self.target_mirror.y)
                 self.path = self.astar_path(graph, start, goal)
                 print(self.path)
-                if self.path:
-                    self.moving = True
+                if len(self.path) > 1 and turn == 'Enemy':
+                    self.move_towards_mirror()
+                    if not self.path:
+                        self.moving = False
+                elif len(self.path) == 1 and turn == 'Enemy':
+                    self.target_mirror.take_damage(self.damage)
+
         except Exception:
             pass
 
@@ -131,14 +136,6 @@ class Enemy(pygame.sprite.Sprite):
 
         # Найти ближайшее зеркало
         self.target_mirror = self.find_nearest_mirror()
-
-        if self.moving and len(self.path) > 1:
-            self.move_towards_mirror()
-            if not self.path:
-                self.moving = False
-
-        if len(self.path) == 1:
-            self.target_mirror.take_damage(self.damage)
 
         try:
             if len(self.target_mirror.groups()) == 0:

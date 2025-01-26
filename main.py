@@ -7,7 +7,7 @@ from Constant_files.SPRITE_GROUPS import *
 from Constant_files.CONSTANT_OBJECTS import screen, clock
 
 from classes.helper_classes.board_classes import tiles_board, game_objects_board
-from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard
+from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
 from classes.helper_classes.object_deck_classes import object_manager
 
 from classes.object_classes.laser_class import Laser
@@ -17,7 +17,8 @@ from classes.object_classes.tile_classes import Default_Tile, Void_Tile
 from classes.object_classes.wall_classes import Wall
 from classes.object_classes.base_class import base
 
-from classes.gui_classes.main_menu_gui_classes import play_button, escape_button
+from classes.gui_classes.gui_classes import Button
+from classes.gui_classes.main_menu_gui_classes import play_button, escape_button, main_menu_eye
 from classes.gui_classes.pause_menu_gui_classes import pause_play_button, pause_escape_button
 
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
@@ -47,10 +48,14 @@ def main_menu():
             try:
                 cursor_sprite_group.update(event)
                 texture_cursor_sprite_group.update(event)
+                parallax_image_sprite_group.update(event)
             except Exception:
                 pass
 
             main_menu_sprite_group.draw(screen)
+
+            pygame.draw.rect(screen, (53, 51, 86), (752, 178, 410, 752))
+            parallax_image_sprite_group.draw(screen)
 
             cursor_sprite_group.draw(screen)
             texture_cursor_sprite_group.draw(screen)
@@ -65,6 +70,8 @@ def game():
         pause = False
         running = True
         return_to_main_menu = False
+        next_turn_init = True
+        current_turn = 'Player'
 
         while running:  # Основной игровой цикл.
             screen.fill((0, 0, 0))
@@ -111,16 +118,32 @@ def game():
 
             try:
                 if pause:
-                    result = pause_menu(event)
+                    result = pause_menu(current_turn)
                     pause, return_to_main_menu = not result[0], result[1]
                     print(pause)
                 else:
-                    game_sprite_group.update(pygame.event.get())  # Обновление всех спрайтов.
+                    if end_turn_button.update():
+                        current_turn = 'Enemy'
+                        next_turn_init = True
+
+                    if current_turn == 'Enemy':
+                        enemy.move(current_turn)
+
+                    game_sprite_group.update(current_turn)  # Обновление всех спрайтов.
             except Exception:
                 pass
 
+
             if return_to_main_menu:
                 running = False
+
+            if next_turn_init:
+                for card in deck_hand.cards.copy():
+                    deck_hand.discard_card(card)
+                deck_active.draw_card(5)
+                next_turn_init = False
+
+
 
             # Отрисовка спрайтов в правильном порядке.
             tiles_sprite_group.draw(screen)
@@ -140,9 +163,14 @@ def game():
             cannon_sprite_group.draw(screen)
 
             description_sprite_group.draw(screen)
+
+            energy_sprite_group.draw(screen)
+
             card_sprite_group.draw(screen)
 
             object_manager_sprite_group.draw(screen)
+            any_texture_sprite_group.draw(screen)
+
 
             if pause:
                 pause_menu_sprite_group.draw(screen)
@@ -156,6 +184,9 @@ def game():
 
             # Обновление кадра.
             pygame.display.flip()
+
+            current_turn = 'Player'
+
 
         else:
             main_menu()
@@ -171,5 +202,6 @@ def pause_menu(event):
 
 
 enemy = Enemy(5, 10, game_objects_board, tiles_board)
+end_turn_button = Button(1500, 950, 1, [any_texture_sprite_group])
 
 main_menu()

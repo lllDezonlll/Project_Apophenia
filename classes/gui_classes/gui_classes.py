@@ -1,7 +1,9 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import game_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group, parallax_image_sprite_group
 from funcs.prom_funcs.Load_func import load_image
 from Constant_files.CONSTANT_OBJECTS import object_description, tile_description
+from Constant_files.CONSTANTS import FPS
+from math import floor
 
 
 # Класс текстур, накладываемых поверх игровых объектов.
@@ -98,3 +100,21 @@ class Button(pygame.sprite.Sprite):
     def update(self):
 
         return self.check_click()
+
+
+class Parallax_Image(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, velocity, target_point):
+        super().__init__(parallax_image_sprite_group)
+        self.x = x
+        self.y = y
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = self.x, self.y
+        self.velocity_x, self.velocity_y = velocity[0] / FPS, velocity[1] / FPS
+        self.target_point = target_point
+
+    def update(self, event):
+        offset_x, offset_y = (pygame.mouse.get_pos()[0] - self.x - self.target_point[0],
+                              pygame.mouse.get_pos()[1] - self.y - self.target_point[1])
+        self.rect.x = (self.x + offset_x * self.velocity_x) // 2 * 2
+        self.rect.y = (self.y + offset_y * self.velocity_y) // 2 * 2

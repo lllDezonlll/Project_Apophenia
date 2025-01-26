@@ -1,9 +1,33 @@
 import pygame
 from classes.object_classes.base_class import base
-from Constant_files.SPRITE_GROUPS import game_sprite_group, card_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, card_sprite_group, energy_sprite_group
 from random import randrange
 from classes.gui_classes.gui_classes import cursor
 from Constant_files.CONSTANTS import LEFT_INTERFACE_LEFT, LEFT_INTERFACE_TOP
+
+
+class Energy(pygame.sprite.Sprite):
+    def __init__(self, default_count):
+        super().__init__(game_sprite_group, energy_sprite_group)
+        self.image = pygame.Surface((100, 100), pygame.SRCALPHA, 32)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = 12, 300
+        self.default_count = default_count
+        self.current_count = default_count
+        self.font = font = pygame.font.Font(None, 50)
+
+    def spend_energy(self, amount):
+        self.current_count -= amount
+
+    def add_energy(self, amount):
+        self.current_count += amount
+
+    def return_to_default_count(self):
+        self.current_count = self.default_count
+
+    def update(self, event):
+        self.image = pygame.Surface((100, 100), pygame.SRCALPHA, 32)
+        self.image.blit(self.font.render(str(self.current_count), 1, pygame.Color('blue')), (10, 10, self.rect.w, self.rect.h))
 
 
 class Deck_Active:
@@ -33,13 +57,10 @@ class Deck_Hand(pygame.sprite.Sprite):
         pass
 
     def add_card(self, card):
-        print(1)
         self.cards.append(card)
         card.change_deck(self)
-        print(self.cards)
 
     def discard_card(self, card):
-        print(self.cards)
         deck_discard.add_card(self.cards.pop(self.cards.index(card)))
 
     def show_cards(self):
@@ -57,6 +78,7 @@ class Deck_Discard:
 
     def add_card(self, card):
         self.cards.append(card)
+        card.change_deck(self)
 
     def shuffle_to_deck_active(self):
         deck_active.add_cards(self.cards)
@@ -139,4 +161,6 @@ class Heal(Card):
 
 deck_active.add_cards([Attack(), Attack(), Attack(), Attack(), Attack(), Heal(), Heal(), Heal(), Attack(), Attack(), Heal(), Attack(), Heal()])
 
-deck_active.draw_card(5)
+
+
+energy = Energy(3)
