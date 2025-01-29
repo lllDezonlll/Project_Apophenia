@@ -22,7 +22,7 @@ class Base(pygame.sprite.Sprite):
         self.active_cannon.switch_activity(True)
         self.state = 'normal'
         self.laser = None
-        self.health = 100  # Здоровье базы.
+        self.health = 1000  # Здоровье базы.
         self.width = CELL_SIZE * 3  # Ширина базы.
         self.height = CELL_SIZE * 3  # Высота бызы.
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
