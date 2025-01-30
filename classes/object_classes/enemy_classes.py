@@ -275,7 +275,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
         else:
             # Если цель не на прямой, двигаемся к ближайшей цели
             if self.target is None:
-                self.target = self.find_nearest_target()
+                self.target = self.find_target_on_line()
 
             if self.target:
                 if len(self.result) == 2:
@@ -285,12 +285,18 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
     def move_towards_something(self):
         next_x, next_y = self.next_move
-        self.objects_board.board[self.y][self.x] = '?'
-        self.objects_board.board[next_y][next_x] = self
-        self.x = next_x
-        self.y = next_y
-        self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
-        self.rect.y = BOARD_TOP + self.y * CELL_SIZE
+        # Убедимся, что новая позиция допустима
+        if self.can_move(next_x, next_y):
+            # Удаляем себя с текущей позиции
+            self.objects_board.board[self.y][self.x] = '?'
+            # Перемещаемся на новую позицию
+            self.x = next_x
+            self.y = next_y
+            # Обновляем позицию на доске
+            self.objects_board.board[self.y][self.x] = self
+            # Обновляем прямоугольник для отрисовки
+            self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
+            self.rect.y = BOARD_TOP + self.y * CELL_SIZE
 
     def deal_damage(self):
         if len(self.target.groups()) == 0:
@@ -307,7 +313,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
     def next_move_calculated(self):
         # Найти ближайший объект (зеркало или базу)
-        self.target = self.find_nearest_target()
+        self.target = self.find_target_on_line()
 
         try:
             if len(self.target.groups()) == 0:
@@ -321,7 +327,8 @@ class Enemy_Shooter(pygame.sprite.Sprite):
                 start = (self.x, self.y)
                 goal = (self.target.x, self.target.y)
                 self.result = self.astar_path(graph, start, goal)
-                self.next_move = self.result[1]
+                if len(self.result) > 1:
+                    self.next_move = self.result[1]
         except Exception:
             pass
 

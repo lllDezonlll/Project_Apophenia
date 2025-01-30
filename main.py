@@ -11,7 +11,7 @@ from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand
 from classes.helper_classes.object_deck_classes import object_manager
 
 from classes.object_classes.laser_class import Laser
-from classes.object_classes.enemy_classes import Enemy
+from classes.object_classes.enemy_classes import Enemy, Enemy_Shooter
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Default_Tile, Void_Tile
 from classes.object_classes.wall_classes import Wall
@@ -20,7 +20,7 @@ from classes.object_classes.base_class import base
 from classes.gui_classes.gui_classes import Button
 from classes.gui_classes.main_menu_gui_classes import play_button, escape_button, main_menu_eye
 from classes.gui_classes.pause_menu_gui_classes import pause_play_button, pause_escape_button
-
+from database import save_game_state, load_game_state, initialize_database
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
 
 
@@ -34,6 +34,10 @@ def main_menu():
         pygame.init()
         pygame.mouse.set_visible(False)
         running = True
+        try:
+            base, enemies, mirrors, walls = load_game_state()
+        except:
+            pass
 
         while running:
             screen.fill((0, 0, 0))
@@ -198,7 +202,7 @@ def pause_menu(event):
 
 enemy1 = Enemy(5, 10, game_objects_board, tiles_board)
 enemy2 = Enemy(16, 16, game_objects_board, tiles_board)
-enemy3 = Enemy(4, 16, game_objects_board, tiles_board)
+enemy3 = Enemy_Shooter(4, 16, game_objects_board, tiles_board)
 end_turn_button = Button(1500, 950, 1, [any_texture_sprite_group])
 
 main_menu()
