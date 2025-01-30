@@ -8,6 +8,7 @@ pygame.init()
 
 clock = pygame.time.Clock()  # Основной таймер игры.
 screen = pygame.display.set_mode(SIZE)  # Основной экран игры.
+music = pygame.mixer.music
 
 # Создание описания полей информации о тайлах и объектах соответственно.
 tile_description = Tile_description(1, LEFT_DESCRIPTION_LEFT, LEFT_DESCRIPTION_TOP, 198, 266)

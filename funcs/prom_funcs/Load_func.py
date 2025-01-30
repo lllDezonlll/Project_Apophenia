@@ -19,6 +19,13 @@ def load_image(path, name, colorkey=None):
     return image
 
 
+def fullname(path, name):
+    fullname = os.path.join(path, name)
+    if not os.path.isfile(fullname):
+        print(f"Файл с именем '{fullname}' не найден")
+        sys.exit()
+    return fullname
+
 # Функция загрузки карты.
 def load_map(filename):
     filename = "data/maps/" + filename

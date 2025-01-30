@@ -114,7 +114,8 @@ class Parallax_Image(pygame.sprite.Sprite):
         self.target_point = target_point
 
     def update(self, event):
-        offset_x, offset_y = (pygame.mouse.get_pos()[0] - self.x - self.target_point[0],
-                              pygame.mouse.get_pos()[1] - self.y - self.target_point[1])
+        mouse_pos = pygame.mouse.get_pos()
+        offset_x, offset_y = (mouse_pos[0] - self.x - self.target_point[0],
+                              mouse_pos[1] - self.y - self.target_point[1])
         self.rect.x = (self.x + offset_x * self.velocity_x) // 2 * 2
         self.rect.y = (self.y + offset_y * self.velocity_y) // 2 * 2

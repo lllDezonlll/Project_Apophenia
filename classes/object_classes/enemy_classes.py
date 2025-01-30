@@ -203,7 +203,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Enemy_Shooter.image, [game_sprite_group, texture_enemy_sprite_group])
-        self.draw()
+        pygame.draw.rect(self.image, pygame.Color('red'), (24, 24, 2, 2))
         self.next_move_calculated()
 
     # Получение урона.
@@ -220,10 +220,6 @@ class Enemy_Shooter(pygame.sprite.Sprite):
             self.health += amount
             if self.health > 100:
                 self.health = 100
-
-    def draw(self):
-        # Рисуем врага (например, красный квадрат)
-        self.image.fill(pygame.Color('red'))
 
     # Отображает своё описание в специальном информационном поле, при получении сигнала от своего хитбокса.
     def display_self_description(self):
@@ -350,8 +346,9 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
     def update(self, *event):
         # Получает урон от лазера
-        if laser := pygame.sprite.spritecollideany(self, laser_sprite_group):
-            if laser != self.laser:
-                self.laser = laser
-                self.take_damage(laser.damage)
-                laser.kill_self()
+        for laser in laser_sprite_group:
+            if pygame.sprite.collide_mask(self, laser):
+                if laser != self.laser:
+                    self.laser = laser
+                    self.take_damage(laser.damage)
+                    laser.kill_self()

@@ -4,7 +4,7 @@ import pygame.display
 
 from Constant_files.CONSTANTS import *
 from Constant_files.SPRITE_GROUPS import *
-from Constant_files.CONSTANT_OBJECTS import screen, clock
+from Constant_files.CONSTANT_OBJECTS import screen, clock, music
 
 from classes.helper_classes.board_classes import tiles_board, game_objects_board
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
@@ -18,10 +18,11 @@ from classes.object_classes.wall_classes import Wall
 from classes.object_classes.base_class import base
 
 from classes.gui_classes.gui_classes import Button
-from classes.gui_classes.main_menu_gui_classes import play_button, escape_button, main_menu_eye
+from classes.gui_classes.main_menu_gui_classes import play_button, escape_button, main_menu_eye, main_menu_cracks_main_mirror, title, menu_background, menu_mirror_fone, shards_2_1, shards_2_2, shards_4_1, shards_4_2, shards_4_3, shards_4_4
 from classes.gui_classes.pause_menu_gui_classes import pause_play_button, pause_escape_button
 from database import save_game_state, load_game_state, initialize_database
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
+from funcs.prom_funcs.Load_func import fullname
 
 
 def terminate():    # Закончить работу программы.
@@ -31,7 +32,12 @@ def terminate():    # Закончить работу программы.
 
 def main_menu():
     if __name__ == '__main__':
+        menu_sprites = [menu_background, shards_4_1, shards_4_2, shards_4_3, shards_4_4, shards_2_1, shards_2_2, menu_mirror_fone, main_menu_eye, main_menu_cracks_main_mirror, title]
         pygame.init()
+        music.load(fullname('data/music', 'main_menu.mp3'))
+        music.set_volume(0.01)
+        music.play(-1)
+
         pygame.mouse.set_visible(False)
         running = True
         try:
@@ -40,7 +46,9 @@ def main_menu():
             pass
 
         while running:
-            screen.fill((0, 0, 0))
+            if music.get_volume() != 0.5:
+                music.set_volume(music.get_volume() + 0.01)
+            screen.fill((26, 18, 35))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     terminate()
@@ -54,11 +62,15 @@ def main_menu():
             texture_cursor_sprite_group.update(1)
             parallax_image_sprite_group.update(1)
 
+
+
+            for sprite in menu_sprites:
+                group = pygame.sprite.Group()
+                group.add(sprite)
+                group.draw(screen)
+
+
             main_menu_sprite_group.draw(screen)
-
-            pygame.draw.rect(screen, (53, 51, 86), (752, 178, 410, 752))
-            parallax_image_sprite_group.draw(screen)
-
             cursor_sprite_group.draw(screen)
             texture_cursor_sprite_group.draw(screen)
 

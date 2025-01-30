@@ -13,13 +13,13 @@ class Laser(pygame.sprite.Sprite):
 
     def __init__(self, x, y, orientation, speed=900 / FPS, damage=1):
         super().__init__(game_sprite_group, laser_sprite_group)
+        self.timer = 0
         self.x, self.y = find_coords_on_board(x, y)
         self.mirror = None
         self.orientation = orientation  # Направление лазера (0, 90, 180, -90)
         self.speed = speed  # Скорость лазера
         self.damage = damage  # Урон от лазера
         self.image = pygame.Surface((8 * CELL_SIZE / 40, 8 * CELL_SIZE / 40), pygame.SRCALPHA, 32)  # Хитбокс для физики лазера.
-        self.image.fill(pygame.Color('red'))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -47,6 +47,10 @@ class Laser(pygame.sprite.Sprite):
         self.kill()
 
     def update(self, event):
+        self.timer += 1
+        if self.timer > 2:
+            self.image.fill(pygame.Color('red'))
+
         # Вызов метода kill_self при условии, что лазера за пределами игрового поля.
         if (self.rect.x < BOARD_LEFT or self.rect.y < BOARD_TOP or
                 self.rect.x > BOARD_LEFT + CELL_SIZE * CELL_COUNT or self.rect.y > BOARD_TOP + CELL_SIZE * CELL_COUNT):
