@@ -40,11 +40,6 @@ def main_menu():
 
         pygame.mouse.set_visible(False)
         running = True
-        try:
-            base, enemies, mirrors, walls = load_game_state()
-        except:
-            pass
-
         while running:
             if music.get_volume() != 0.5:
                 music.set_volume(music.get_volume() + 0.01)

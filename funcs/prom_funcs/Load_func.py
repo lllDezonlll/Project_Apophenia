@@ -11,6 +11,7 @@ def load_image(path, name, colorkey=None):
         sys.exit()
     image = pygame.image.load(fullname)
     image = image.convert_alpha()
+
     if colorkey is not None:
         image = image.convert()
         if colorkey == -1:
