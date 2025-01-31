@@ -68,7 +68,7 @@ class Deck_Hand(pygame.sprite.Sprite):
     def show_cards(self):
         for i, card in enumerate(self.cards):
             # print(i, card)
-            card.rect.y = LEFT_INTERFACE_TOP + (card.rect.h + 10) * i
+            card.rect.y = LEFT_INTERFACE_TOP + (card.rect.h) * i
 
     def update(self, event):
         self.show_cards()
@@ -98,7 +98,7 @@ class Card(pygame.sprite.Sprite):
         self.deck = deck
         self.cost = 0
         self.mouse_down = False
-        self.image = pygame.Surface((396, 48), pygame.SRCALPHA, 32)
+        self.image = pygame.Surface((372, 54), pygame.SRCALPHA, 32)
         self.image.fill(pygame.Color('red'))
         self.rect = self.image.get_rect()
         self.rect.x = LEFT_INTERFACE_LEFT

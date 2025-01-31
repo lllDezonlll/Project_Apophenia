@@ -22,7 +22,7 @@ from classes.gui_classes.main_menu_gui_classes import play_button, escape_button
 from classes.gui_classes.pause_menu_gui_classes import pause_play_button, pause_escape_button
 from database import save_game_state, load_game_state, initialize_database
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
-from funcs.prom_funcs.Load_func import fullname
+from funcs.prom_funcs.Load_func import fullname, load_image
 
 
 def terminate():    # Закончить работу программы.
@@ -63,7 +63,6 @@ def main_menu():
             parallax_image_sprite_group.update(1)
 
 
-
             for sprite in menu_sprites:
                 group = pygame.sprite.Group()
                 group.add(sprite)
@@ -75,6 +74,9 @@ def main_menu():
             texture_cursor_sprite_group.draw(screen)
 
             pygame.display.flip()
+
+            print(clock.tick(FPS))
+
 
         game()
 
@@ -88,7 +90,8 @@ def game():
         current_turn = 'Player'
 
         while running:  # Основной игровой цикл.
-            screen.fill((0, 0, 0))
+            screen.fill((255, 255, 255))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  # Закончить программу если игрок нажал на крестик.
                     terminate()
@@ -124,9 +127,12 @@ def game():
                         Mirror(x, y, -90, game_objects_board)
                     if event.key == pygame.K_q:
                         tiles_board.add_tile(Default_Tile(x, y, tiles_board), del_previous=True)
-                        game_objects_board.del_object(game_objects_board.board[y][x])
+                        try:
+                            game_objects_board.board[y][x].kill_self()
+                        except Exception:
+                            pass
                     if event.key == pygame.K_e:
-                        tiles_board.add_tile(Wall(x, y, game_objects_board), del_previous=True)
+                        game_objects_board.add_object(Wall(x, y, game_objects_board), del_previous=True)
 
             if pause:
                 result = pause_menu(current_turn)
@@ -152,11 +158,11 @@ def game():
             if next_turn_init:
                 for card in deck_hand.cards.copy():
                     deck_hand.discard_card(card)
-                deck_active.draw_card(5)
+                deck_active.draw_card(12)
                 energy.return_to_default_count()
                 next_turn_init = False
 
-
+            screen.blit(game_ui, (0, 0))
 
             # Отрисовка спрайтов в правильном порядке.
             tiles_sprite_group.draw(screen)
@@ -192,7 +198,7 @@ def game():
             texture_cursor_sprite_group.draw(screen)
 
             # Тик у таймера от фпс.
-            clock.tick(FPS)
+            print(clock.tick(FPS))
 
             # Обновление кадра.
             pygame.display.flip()
@@ -212,6 +218,7 @@ def pause_menu(event):
     return pause_play_button.update(), return_to_main_menu
 
 
+game_ui = load_image('data/images', 'game_ui_fone.png')
 enemy1 = Enemy(5, 10, game_objects_board, tiles_board)
 enemy2 = Enemy(16, 16, game_objects_board, tiles_board)
 enemy3 = Enemy_Shooter(4, 16, game_objects_board, tiles_board)

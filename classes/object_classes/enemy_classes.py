@@ -114,9 +114,9 @@ class Enemy(pygame.sprite.Sprite):
     def move_towards_something(self):
         next_x, next_y = self.next_move
         self.objects_board.board[self.y][self.x] = '?'
-        self.objects_board.board[next_y][next_x] = self
         self.x = next_x
         self.y = next_y
+        self.objects_board.add_object(self)
         self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
         self.rect.y = BOARD_TOP + self.y * CELL_SIZE
 
@@ -176,7 +176,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.laser = laser
                 self.take_damage(laser.damage)
                 laser.kill_self()
-
 
 
 class Enemy_Shooter(pygame.sprite.Sprite):

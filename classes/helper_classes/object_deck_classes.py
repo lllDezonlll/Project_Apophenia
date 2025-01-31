@@ -13,7 +13,7 @@ class Object_manager(pygame.sprite.Sprite):
         super().__init__(game_sprite_group, object_manager_sprite_group)
         self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
         self.rect = self.image.get_rect()
-        self.max_object_count = 21
+        self.max_object_count = 28
         self.picked_action = None
         self.objects = []
 
@@ -28,8 +28,8 @@ class Object_manager(pygame.sprite.Sprite):
 
     def show_objects(self):
         for i, object in enumerate(self.objects):
-            object.rect.x = OBJECT_MANAGER_LEFT + i % 7 * (object.rect.w + 10)
-            object.rect.y = OBJECT_MANAGER_TOP + i // 7 * (object.rect.h + 10)
+            object.rect.x = OBJECT_MANAGER_LEFT + i % 7 * (object.rect.w + 6)
+            object.rect.y = OBJECT_MANAGER_TOP + i // 7 * (object.rect.h + 6)
 
     def pick_action(self, action):
         self.picked_action = action
@@ -200,4 +200,35 @@ object_manager.add_objects([Place_action(Mirror(10000, 10000, 0, game_objects_bo
                             Manipulate_action(1, 0),
                             Manipulate_action(-1, 0),
                             Manipulate_action(0, 1),
-                            Manipulate_action(0, -1)])
+                            Manipulate_action(0, -1),
+                            Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
+                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
+                            Manipulate_action(1, 0),
+                            Manipulate_action(-1, 0),
+                            Manipulate_action(0, 1),
+                            Manipulate_action(0, -1),
+Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
+                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
+                            Manipulate_action(1, 0),
+                            Manipulate_action(-1, 0),
+                            Manipulate_action(0, 1),
+                            Manipulate_action(0, -1),
+                            Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
+                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
+                            Manipulate_action(1, 0),
+                            Manipulate_action(-1, 0),
+                            Manipulate_action(0, 1),
+                            Manipulate_action(0, -1),
+Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
+                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
+                            Manipulate_action(1, 0),
+                            Manipulate_action(-1, 0),
+                            Manipulate_action(0, 1),
+                            Manipulate_action(0, -1),
+                            Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
+                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
+                            Manipulate_action(1, 0),
+                            Manipulate_action(-1, 0),
+                            Manipulate_action(0, 1),
+                            Manipulate_action(0, -1)
+                            ])
