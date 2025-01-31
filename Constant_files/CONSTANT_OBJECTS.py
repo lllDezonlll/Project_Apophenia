@@ -7,7 +7,8 @@ from Constant_files.CONSTANTS import SIZE, LEFT_DESCRIPTION_LEFT, LEFT_DESCRIPTI
 pygame.init()
 
 clock = pygame.time.Clock()  # Основной таймер игры.
-screen = pygame.display.set_mode(SIZE)  # Основной экран игры.
+screen = pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)  # Основной экран игры.
+window = pygame.display.set_mode(SIZE)
 music = pygame.mixer.music
 
 # Создание описания полей информации о тайлах и объектах соответственно.

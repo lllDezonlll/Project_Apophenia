@@ -1,10 +1,10 @@
 import pygame
 
 from Constant_files.SPRITE_GROUPS import game_sprite_group, laser_sprite_group, mirror_sprite_group, texture_laser_sprite_group
-from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT, FPS
+from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT, FPS, SIZE
 from classes.gui_classes.gui_classes import Following_Texture
 from funcs.prom_funcs.Load_func import load_image
-from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
+from funcs.prom_funcs.Calc_coords_func import find_coords_on_board, get_mouse_pos, get_fixed_pos, find_coords_for_laser
 
 
 # Класс атаки лазером.
@@ -14,7 +14,7 @@ class Laser(pygame.sprite.Sprite):
     def __init__(self, x, y, orientation, speed=900 / FPS, damage=20):
         super().__init__(game_sprite_group, laser_sprite_group)
         self.timer = 0
-        self.x, self.y = find_coords_on_board(x, y)
+        self.x, self.y = find_coords_for_laser(x, y)
         self.mirror = None
         self.orientation = orientation  # Направление лазера (0, 90, 180, -90)
         self.speed = speed  # Скорость лазера
@@ -30,16 +30,20 @@ class Laser(pygame.sprite.Sprite):
     def move(self):
         if self.orientation == -90:
             self.rect = self.rect.move(0, -self.speed)  # Подобные строчки отвечают за само движение лазера.
-            self.rect.x = find_coords_on_board(self.rect.x, self.rect.y)[0] * CELL_SIZE + CELL_SIZE / 2 + BOARD_LEFT - self.rect.w / 2 # Подобные строчки отвечают за выравнивание лазера по сетке.
+            self.rect.x = find_coords_for_laser(self.rect.x, self.rect.y)[0] * CELL_SIZE + CELL_SIZE / 2 + BOARD_LEFT - self.rect.w / 2 # Подобные строчки отвечают за выравнивание лазера по сетке.
+
         elif self.orientation == 90:
             self.rect = self.rect.move(0, self.speed)
-            self.rect.x = find_coords_on_board(self.rect.x, self.rect.y)[0] * CELL_SIZE + CELL_SIZE / 2 + BOARD_LEFT - self.rect.w / 2
+            self.rect.x = find_coords_for_laser(self.rect.x, self.rect.y)[0] * CELL_SIZE + CELL_SIZE / 2 + BOARD_LEFT - self.rect.w / 2
         elif self.orientation == 180:
             self.rect = self.rect.move(-self.speed, 0)
-            self.rect.y = find_coords_on_board(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
+            self.rect.y = find_coords_for_laser(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
         elif self.orientation == 0:
             self.rect = self.rect.move(self.speed, 0)
-            self.rect.y = find_coords_on_board(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
+            self.rect.y = find_coords_for_laser(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
+
+
+        print(self.rect)
 
     # Удаление себя и своей текстуры.
     def kill_self(self):

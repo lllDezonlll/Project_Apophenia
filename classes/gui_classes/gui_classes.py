@@ -1,8 +1,9 @@
 import pygame
 from Constant_files.SPRITE_GROUPS import game_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group, parallax_image_sprite_group, laser_sprite_group
 from funcs.prom_funcs.Load_func import load_image, fullname
+from funcs.prom_funcs.Calc_coords_func import get_fixed_pos
 from Constant_files.CONSTANT_OBJECTS import object_description, tile_description
-from Constant_files.CONSTANTS import FPS
+from Constant_files.CONSTANTS import FPS, SIZE
 from math import floor
 
 
@@ -61,7 +62,8 @@ class Cursor(pygame.sprite.Sprite):
         # Следование за системным курсором и обновления затрагиваемого описания.
         self.update_description()
         if pygame.mouse.get_focused():
-            self.rect.x, self.rect.y = pygame.mouse.get_pos()
+            pos = pygame.mouse.get_pos()
+            self.rect.x, self.rect.y = get_fixed_pos(*pos)
 
     # Ставит обычную картинку классам описания тайлов и объектов, если игрок не навёлся на предмет описания.
     def update_description(self):
@@ -125,7 +127,8 @@ class Parallax_Image(pygame.sprite.Sprite):
 
 
 class Health_Bar(Following_Texture):
-    image = load_image('data/textures', 'health.png')
+    # image = load_image('data/textures', 'health.png')
+    image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
 
     def __init__(self, object, image, *groups, rotatable=False, offset_x=0, offset_y=0):
         super().__init__(object, image, *groups, rotatable=False, offset_x=0, offset_y=0)

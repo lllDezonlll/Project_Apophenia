@@ -4,7 +4,7 @@ import pygame.display
 
 from Constant_files.CONSTANTS import *
 from Constant_files.SPRITE_GROUPS import *
-from Constant_files.CONSTANT_OBJECTS import screen, clock, music
+from Constant_files.CONSTANT_OBJECTS import screen, clock, music, window
 
 from classes.helper_classes.board_classes import tiles_board, game_objects_board, spawner
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
@@ -34,16 +34,17 @@ def main_menu():
     if __name__ == '__main__':
         menu_sprites = [menu_background, shards_4_1, shards_4_2, shards_4_3, shards_4_4, shards_2_1, shards_2_2, menu_mirror_fone, main_menu_eye, main_menu_cracks_main_mirror, title]
         pygame.init()
+        pygame.mouse.set_visible(False)
         music.load(fullname('data/music', 'main_menu.mp3'))
         music.set_volume(0.01)
         music.play(-1)
 
-        pygame.mouse.set_visible(False)
+
         running = True
         while running:
             if music.get_volume() != 0.5:
                 music.set_volume(music.get_volume() + 0.01)
-            screen.fill((26, 18, 35))
+            screen =  pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     terminate()
@@ -68,10 +69,12 @@ def main_menu():
             cursor_sprite_group.draw(screen)
             texture_cursor_sprite_group.draw(screen)
 
+            window.fill((0, 0, 0))
+            window.blit(pygame.transform.scale(screen, SIZE), (0, 0))
+
+            clock.tick(FPS)
+
             pygame.display.flip()
-
-            print(clock.tick(FPS))
-
 
         game()
 
@@ -88,7 +91,7 @@ def game():
         music.play(-1)
 
         while running:  # Основной игровой цикл.
-            screen.fill((255, 255, 255))
+            screen =  pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)
             if music.get_volume() != 0.5:
                 music.set_volume(music.get_volume() + 0.01)
 
@@ -206,6 +209,8 @@ def game():
             cursor_sprite_group.draw(screen)
             texture_cursor_sprite_group.draw(screen)
 
+            window.fill((0, 0, 0))
+            window.blit(pygame.transform.scale(screen, SIZE), (0, 0))
             # Тик у таймера от фпс.
             clock.tick(FPS)
 
