@@ -1,11 +1,23 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import game_sprite_group, object_manager_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, object_manager_sprite_group, laser_sprite_group, energy_sprite_group
 from Constant_files.CONSTANTS import OBJECT_MANAGER_LEFT, OBJECT_MANAGER_TOP
 from classes.object_classes.mirror_classes import Mirror
+from classes.helper_classes.deck_and_cards_classes import Energy
 from classes.object_classes.wall_classes import Wall
 from classes.helper_classes.board_classes import game_objects_board
 from classes.helper_classes.hitbox_classes import Hitbox
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
+from funcs.prom_funcs.Load_func import fullname
+
+
+class Elixir(Energy):
+    def __init__(self, default_count):
+        super().__init__(default_count)
+        self.rect.x = 1512
+
+
+
+elixir = Elixir(1)
 
 
 class Object_manager(pygame.sprite.Sprite):
@@ -59,6 +71,7 @@ object_manager = Object_manager()
 class Place_action(pygame.sprite.Sprite):
     def __init__(self, object, has_orientation=True):
         super().__init__(game_sprite_group, object_manager_sprite_group)
+        self.cost = 1
         self.object_manager = object_manager
         self.mouse_down = False
         self.object = object
@@ -81,8 +94,16 @@ class Place_action(pygame.sprite.Sprite):
         self.selected = False
 
     def do_action(self):
+        if laser_sprite_group.sprites() != []:
+            print('Есть лазеры')
+            return
+
         x, y = self.check_click()
         if not x is None and not y is None and game_objects_board.board[y][x] == '?':
+            if self.cost <= elixir.current_count:
+                elixir.spend_energy(self.cost)
+            else:
+                return
             if self.has_orientation:
                 type(self.object)(x, y, self.object.orientation, game_objects_board)
             else:
@@ -117,14 +138,16 @@ class Place_action(pygame.sprite.Sprite):
 
     def update(self, event):
         if self.selected:
-            pygame.draw.rect(self.image, pygame.Color('purple'), (0, 0, 48, 48), width=2)
+            pygame.draw.rect(self.image, pygame.Color('white'), (0, 0, 48, 48), width=2)
         else:
             self.image = self.default_image.copy()
+        self.image.blit(pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24).render(str(self.cost), 1, pygame.Color('white')), (2, 26))
 
 
 class Manipulate_action(pygame.sprite.Sprite):
     def __init__(self, manipulate_x, manipulate_y):
         super().__init__(game_sprite_group, object_manager_sprite_group)
+        self.cost = 1
         self.image = pygame.Surface((48, 48), pygame.SRCALPHA, 32)
         self.manipulate_x, self.manipulate_y = manipulate_x, manipulate_y
         self.mouse_down = False
@@ -148,8 +171,16 @@ class Manipulate_action(pygame.sprite.Sprite):
         self.selected = False
 
     def do_action(self):
+        if laser_sprite_group.sprites() != []:
+            print('Есть лазеры')
+            return
+
         x, y = self.check_click()
         if not x is None and not y is None:
+            if self.cost <= elixir.current_count:
+                elixir.spend_energy(self.cost)
+            else:
+                return
             object = game_objects_board.board[y][x]
             if object != '?':
                 self.manipulate_with_object(object, x, y)
@@ -158,18 +189,20 @@ class Manipulate_action(pygame.sprite.Sprite):
         if (not 0 <= x + self.manipulate_x <= 18 or not 0 <= y + self.manipulate_y <= 18 or
                 x + self.manipulate_x in range(8, 11) and y + self.manipulate_y in range(8, 11)):
             print('Выход за поле или попадание объекта на базу игрока.')
+            elixir.add_energy(self.cost)
             return
 
         if game_objects_board.board[y + self.manipulate_y][x + self.manipulate_x] != '?':
             print('Передвижение объекта на другой объект невозможно.')
+            elixir.add_energy(self.cost)
             return
 
         game_objects_board.board[y][x] = '?'
-        game_objects_board.board[y + self.manipulate_y][x + self.manipulate_x] = object
         object.x += self.manipulate_x
         object.y += self.manipulate_y
         object.rect.x += 48 * self.manipulate_x
         object.rect.y += 48 * self.manipulate_y
+        game_objects_board.add_object(object)
 
         game_objects_board.print_objects()
 
@@ -190,9 +223,11 @@ class Manipulate_action(pygame.sprite.Sprite):
 
     def update(self, event):
         if self.selected:
-            pygame.draw.rect(self.image, pygame.Color('purple'), (0, 0, 48, 48), width=2)
+            pygame.draw.rect(self.image, pygame.Color('white'), (0, 0, 48, 48), width=2)
         else:
             self.image = self.default_image.copy()
+
+        self.image.blit(pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24).render(str(self.cost), 1, pygame.Color('white')), (2, 26))
 
 
 object_manager.add_objects([Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
@@ -207,28 +242,4 @@ object_manager.add_objects([Place_action(Mirror(10000, 10000, 0, game_objects_bo
                             Manipulate_action(-1, 0),
                             Manipulate_action(0, 1),
                             Manipulate_action(0, -1),
-Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
-                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
-                            Manipulate_action(1, 0),
-                            Manipulate_action(-1, 0),
-                            Manipulate_action(0, 1),
-                            Manipulate_action(0, -1),
-                            Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
-                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
-                            Manipulate_action(1, 0),
-                            Manipulate_action(-1, 0),
-                            Manipulate_action(0, 1),
-                            Manipulate_action(0, -1),
-Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
-                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
-                            Manipulate_action(1, 0),
-                            Manipulate_action(-1, 0),
-                            Manipulate_action(0, 1),
-                            Manipulate_action(0, -1),
-                            Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),
-                            Place_action(Wall(10000, 10000, game_objects_board), has_orientation=False),
-                            Manipulate_action(1, 0),
-                            Manipulate_action(-1, 0),
-                            Manipulate_action(0, 1),
-                            Manipulate_action(0, -1)
                             ])

@@ -11,6 +11,7 @@ laser_sprite_group = pygame.sprite.Group()
 enemy_sprite_group = pygame.sprite.Group()
 hitbox_sprite_group = pygame.sprite.Group()
 description_sprite_group = pygame.sprite.Group()
+texture_health_group = pygame.sprite.Group()
 
 texture_cursor_sprite_group = pygame.sprite.Group()
 cursor_sprite_group = pygame.sprite.Group()

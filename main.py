@@ -8,7 +8,7 @@ from Constant_files.CONSTANT_OBJECTS import screen, clock, music
 
 from classes.helper_classes.board_classes import tiles_board, game_objects_board
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
-from classes.helper_classes.object_deck_classes import object_manager
+from classes.helper_classes.object_deck_classes import object_manager, elixir
 
 from classes.object_classes.laser_class import Laser
 from classes.object_classes.enemy_classes import Enemy, Enemy_Shooter
@@ -36,7 +36,7 @@ def main_menu():
         pygame.init()
         music.load(fullname('data/music', 'main_menu.mp3'))
         music.set_volume(0.01)
-        music.play(-1)
+        # music.play(-1)
 
         pygame.mouse.set_visible(False)
         running = True
@@ -153,6 +153,10 @@ def game():
             if next_turn_init:
                 for card in deck_hand.cards.copy():
                     deck_hand.discard_card(card)
+                global elixir_grow
+                if elixir_grow < 5:
+                    elixir_grow += 1
+                elixir.add_energy(elixir_grow)
                 deck_active.draw_card(12)
                 energy.return_to_default_count()
                 next_turn_init = False
@@ -175,6 +179,8 @@ def game():
             texture_laser_sprite_group.draw(screen)
 
             cannon_sprite_group.draw(screen)
+
+            texture_health_group.draw(screen)
 
             description_sprite_group.draw(screen)
 
@@ -212,6 +218,8 @@ def pause_menu(event):
 
     return pause_play_button.update(), return_to_main_menu
 
+
+elixir_grow = 0
 
 game_ui = load_image('data/images', 'game_ui_fone.png')
 enemy1 = Enemy(5, 10, game_objects_board, tiles_board)

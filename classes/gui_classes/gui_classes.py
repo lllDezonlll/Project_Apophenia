@@ -1,6 +1,6 @@
 import pygame
-from Constant_files.SPRITE_GROUPS import game_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group, parallax_image_sprite_group
-from funcs.prom_funcs.Load_func import load_image
+from Constant_files.SPRITE_GROUPS import game_sprite_group, cursor_sprite_group, tiles_sprite_group, object_sprite_group, object_manager_sprite_group, texture_cursor_sprite_group, parallax_image_sprite_group, laser_sprite_group
+from funcs.prom_funcs.Load_func import load_image, fullname
 from Constant_files.CONSTANT_OBJECTS import object_description, tile_description
 from Constant_files.CONSTANTS import FPS
 from math import floor
@@ -12,7 +12,10 @@ class Following_Texture(pygame.sprite.Sprite):
         super().__init__(*groups)
         self.image = image
         self.default_image = image
-        self.rect = self.image.get_rect()
+        if self.image is None:
+            self.rect = pygame.Rect(0, 0, 1920, 1080)
+        else:
+            self.rect = self.image.get_rect()
         self.object = object
         self.offset_x, self.offset_y = offset_x, offset_y
         self.default_offset_x, self.default_offset_y = offset_x, offset_y
@@ -119,3 +122,32 @@ class Parallax_Image(pygame.sprite.Sprite):
                               mouse_pos[1] - self.y - self.target_point[1])
         self.rect.x = (self.x + offset_x * self.velocity_x) // 2 * 2
         self.rect.y = (self.y + offset_y * self.velocity_y) // 2 * 2
+
+
+class Health_Bar(Following_Texture):
+    image = load_image('data/textures', 'health.png')
+
+    def __init__(self, object, image, *groups, rotatable=False, offset_x=0, offset_y=0):
+        super().__init__(object, image, *groups, rotatable=False, offset_x=0, offset_y=0)
+        self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+        self.font = pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24)
+        self.back_font = pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 28)
+
+    def update(self, event):
+        # Проверка на статичность или ?вращабельность?.
+        if self.rotatable:
+            if self.orientation != self.object.orientation:
+                self.orientation = self.object.orientation
+                self.rotate()
+
+        # Следование за игровым объектом
+        self.rect.x, self.rect.y = self.object.rect.x + self.offset_x, self.object.rect.y + self.offset_y
+        self.image = pygame.Surface((80, 40), pygame.SRCALPHA, 32)
+        text = self.font.render(str(self.object.health), 1, pygame.Color((255, 255, 255)))
+
+        pygame.draw.rect(self.image, pygame.Color(26, 18, 35), ((48 - text.get_size()[0]) // 2 - 6, 2, text.get_size()[0] + 20, 20))
+        self.image.blit(self.font.render(str(self.object.health), 1, pygame.Color((255, 255, 255))), (6 + (48 - text.get_size()[0]) // 2 - 10, 0))
+        self.image.blit(Health_Bar.image, ((48 - text.get_size()[0]) // 2 + text.get_size()[0] - 4, 4))
+        self.rect.x -= 4

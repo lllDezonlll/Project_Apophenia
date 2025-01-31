@@ -1,9 +1,10 @@
 import pygame
 from classes.object_classes.base_class import base
-from Constant_files.SPRITE_GROUPS import game_sprite_group, card_sprite_group, energy_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, card_sprite_group, energy_sprite_group, laser_sprite_group
 from random import randrange
 from classes.gui_classes.gui_classes import cursor
 from Constant_files.CONSTANTS import LEFT_INTERFACE_LEFT, LEFT_INTERFACE_TOP
+from funcs.prom_funcs.Load_func import fullname
 
 
 class Energy(pygame.sprite.Sprite):
@@ -14,7 +15,7 @@ class Energy(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = 12, 300
         self.default_count = default_count
         self.current_count = default_count
-        self.font = font = pygame.font.Font(None, 50)
+        self.font = pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 50)
 
     def spend_energy(self, amount):
         self.current_count -= amount
@@ -121,9 +122,13 @@ class Card(pygame.sprite.Sprite):
             return
 
         if not pygame.mouse.get_pressed()[0] and pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand and self.mouse_down and energy.current_count >= self.cost:
-            self.play()
-            energy.spend_energy(self.cost)
-            self.change_deck(deck_discard)
+
+            if laser_sprite_group.sprites() != []:
+                print('Есть лазеры')
+            else:
+                self.play()
+                energy.spend_energy(self.cost)
+                self.change_deck(deck_discard)
             self.mouse_down = False
 
     def update(self, *event):

@@ -1,10 +1,10 @@
 import pygame
 from Constant_files.SPRITE_GROUPS import (game_sprite_group, object_sprite_group, enemy_sprite_group, laser_sprite_group,
-                                          texture_enemy_sprite_group, mirror_sprite_group, base_sprite_group)
+                                          texture_enemy_sprite_group, mirror_sprite_group, base_sprite_group, texture_health_group)
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT
 from classes.helper_classes.hitbox_classes import Hitbox
 from Constant_files.CONSTANT_OBJECTS import object_description
-from classes.gui_classes.gui_classes import Following_Texture
+from classes.gui_classes.gui_classes import Following_Texture, Health_Bar
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Void_Tile
 from classes.object_classes.wall_classes import Wall
@@ -38,6 +38,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Enemy.image, [game_sprite_group, texture_enemy_sprite_group])
+        self.health_bar = Health_Bar(self, None, [game_sprite_group, texture_health_group], offset_y=-22)
         self.draw()
         self.next_move_calculated()
 
@@ -224,6 +225,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
         self.hitbox = Hitbox(self)
         self.texture = Following_Texture(self, Enemy_Shooter.image, [game_sprite_group, texture_enemy_sprite_group])
+        self.health_bar = Health_Bar(self, None, [game_sprite_group, texture_health_group], offset_y=-22)
         pygame.draw.rect(self.image, pygame.Color('red'), (24, 24, 2, 2))
         self.next_move_calculated()
 
