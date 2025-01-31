@@ -1,5 +1,5 @@
 import pygame
-from classes.object_classes.base_class import base
+from classes.object_classes.base_classes import base
 from Constant_files.SPRITE_GROUPS import game_sprite_group, card_sprite_group, energy_sprite_group, laser_sprite_group
 from random import randrange
 from classes.gui_classes.gui_classes import cursor

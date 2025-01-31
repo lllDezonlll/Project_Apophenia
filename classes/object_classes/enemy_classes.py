@@ -8,7 +8,7 @@ from classes.gui_classes.gui_classes import Following_Texture, Health_Bar
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Void_Tile
 from classes.object_classes.wall_classes import Wall
-from classes.object_classes.base_class import Base
+from classes.object_classes.base_classes import Base
 from classes.object_classes.laser_class import Laser
 from funcs.prom_funcs.Load_func import load_image
 import networkx as nx
@@ -16,6 +16,7 @@ import networkx as nx
 
 class Enemy(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
+    cost = 5
 
     def __init__(self, x, y, objects_board, tiles_board, health=50, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
@@ -67,6 +68,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def kill_self(self):
         self.texture.kill()
+        self.health_bar.kill()
         self.objects_board.board[self.y][self.x] = '?'
         self.kill()
 
@@ -203,6 +205,7 @@ class Enemy(pygame.sprite.Sprite):
 
 class Enemy_Shooter(pygame.sprite.Sprite):
     image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
+    cost = 8
 
     def __init__(self, x, y, objects_board, tiles_board, health=20, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
@@ -250,6 +253,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
     def kill_self(self):
         self.texture.kill()
+        self.health_bar.kill()
         self.objects_board.board[self.y][self.x] = '?'
         self.kill()
 

@@ -3,7 +3,7 @@ import os
 from classes.object_classes.enemy_classes import Enemy, Enemy_Shooter
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.wall_classes import Wall
-from classes.object_classes.base_class import Base, Cannon
+from classes.object_classes.base_classes import Base, Cannon
 
 
 def initialize_database():

@@ -6,7 +6,7 @@ from Constant_files.CONSTANTS import *
 from Constant_files.SPRITE_GROUPS import *
 from Constant_files.CONSTANT_OBJECTS import screen, clock, music
 
-from classes.helper_classes.board_classes import tiles_board, game_objects_board
+from classes.helper_classes.board_classes import tiles_board, game_objects_board, spawner
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
 from classes.helper_classes.object_deck_classes import object_manager, elixir
 
@@ -15,7 +15,7 @@ from classes.object_classes.enemy_classes import Enemy, Enemy_Shooter
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Default_Tile, Void_Tile
 from classes.object_classes.wall_classes import Wall
-from classes.object_classes.base_class import base
+from classes.object_classes.base_classes import base
 
 from classes.gui_classes.gui_classes import Button
 from classes.gui_classes.main_menu_gui_classes import play_button, escape_button, main_menu_eye, main_menu_cracks_main_mirror, title, menu_background, menu_mirror_fone, shards_2_1, shards_2_2, shards_4_1, shards_4_2, shards_4_3, shards_4_4
@@ -36,7 +36,7 @@ def main_menu():
         pygame.init()
         music.load(fullname('data/music', 'main_menu.mp3'))
         music.set_volume(0.01)
-        # music.play(-1)
+        music.play(-1)
 
         pygame.mouse.set_visible(False)
         running = True
@@ -83,9 +83,14 @@ def game():
         return_to_main_menu = False
         next_turn_init = True
         current_turn = 'Player'
+        music.load(fullname('data/music', 'graveyard.mp3'))
+        music.set_volume(0.01)
+        music.play(-1)
 
         while running:  # Основной игровой цикл.
             screen.fill((255, 255, 255))
+            if music.get_volume() != 0.5:
+                music.set_volume(music.get_volume() + 0.01)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  # Закончить программу если игрок нажал на крестик.
@@ -143,6 +148,9 @@ def game():
                         sprite.do_action()
                         sprite.next_move_calculated()
 
+                    spawner.calculate_spawn()
+                    spawner.spawn_enemies()
+
                     game_objects_board.print_objects()
 
                 game_sprite_group.update(current_turn)  # Обновление всех спрайтов.
@@ -154,8 +162,8 @@ def game():
                 for card in deck_hand.cards.copy():
                     deck_hand.discard_card(card)
                 global elixir_grow
-                if elixir_grow < 5:
-                    elixir_grow += 1
+                # if elixir_grow < 5:
+                    # elixir_grow += 1
                 elixir.add_energy(elixir_grow)
                 deck_active.draw_card(12)
                 energy.return_to_default_count()
@@ -199,7 +207,7 @@ def game():
             texture_cursor_sprite_group.draw(screen)
 
             # Тик у таймера от фпс.
-            print(clock.tick(FPS))
+            clock.tick(FPS)
 
             # Обновление кадра.
             pygame.display.flip()
@@ -219,12 +227,9 @@ def pause_menu(event):
     return pause_play_button.update(), return_to_main_menu
 
 
-elixir_grow = 0
+elixir_grow = 1
 
 game_ui = load_image('data/images', 'game_ui_fone.png')
-enemy1 = Enemy(5, 10, game_objects_board, tiles_board)
-enemy2 = Enemy(16, 16, game_objects_board, tiles_board)
-enemy3 = Enemy_Shooter(4, 16, game_objects_board, tiles_board)
 end_turn_button = Button(1500, 950, 1, [any_texture_sprite_group])
 
 main_menu()

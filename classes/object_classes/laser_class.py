@@ -11,7 +11,7 @@ from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
 class Laser(pygame.sprite.Sprite):
     image = load_image('data/textures', 'laser_test.png')
 
-    def __init__(self, x, y, orientation, speed=900 / FPS, damage=1):
+    def __init__(self, x, y, orientation, speed=900 / FPS, damage=20):
         super().__init__(game_sprite_group, laser_sprite_group)
         self.timer = 0
         self.x, self.y = find_coords_on_board(x, y)

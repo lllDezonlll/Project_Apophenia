@@ -17,7 +17,7 @@ class Elixir(Energy):
 
 
 
-elixir = Elixir(1)
+elixir = Elixir(0)
 
 
 class Object_manager(pygame.sprite.Sprite):
@@ -71,6 +71,7 @@ object_manager = Object_manager()
 class Place_action(pygame.sprite.Sprite):
     def __init__(self, object, has_orientation=True):
         super().__init__(game_sprite_group, object_manager_sprite_group)
+        self.font = pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24)
         self.cost = 1
         self.object_manager = object_manager
         self.mouse_down = False
@@ -94,11 +95,13 @@ class Place_action(pygame.sprite.Sprite):
         self.selected = False
 
     def do_action(self):
+
+        x, y = self.check_click()
+
         if laser_sprite_group.sprites() != []:
             print('Есть лазеры')
             return
 
-        x, y = self.check_click()
         if not x is None and not y is None and game_objects_board.board[y][x] == '?':
             if self.cost <= elixir.current_count:
                 elixir.spend_energy(self.cost)
@@ -137,16 +140,16 @@ class Place_action(pygame.sprite.Sprite):
         self.default_image = pygame.transform.rotate(self.default_image, -angle)
 
     def update(self, event):
+        self.image = self.default_image.copy()
         if self.selected:
             pygame.draw.rect(self.image, pygame.Color('white'), (0, 0, 48, 48), width=2)
-        else:
-            self.image = self.default_image.copy()
-        self.image.blit(pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24).render(str(self.cost), 1, pygame.Color('white')), (2, 26))
+        self.image.blit(self.font.render(str(self.cost), 1, pygame.Color('white')), (2, 26))
 
 
 class Manipulate_action(pygame.sprite.Sprite):
     def __init__(self, manipulate_x, manipulate_y):
         super().__init__(game_sprite_group, object_manager_sprite_group)
+        self.font = pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24)
         self.cost = 1
         self.image = pygame.Surface((48, 48), pygame.SRCALPHA, 32)
         self.manipulate_x, self.manipulate_y = manipulate_x, manipulate_y
@@ -184,6 +187,8 @@ class Manipulate_action(pygame.sprite.Sprite):
             object = game_objects_board.board[y][x]
             if object != '?':
                 self.manipulate_with_object(object, x, y)
+            else:
+                elixir.add_energy(self.cost)
 
     def manipulate_with_object(self, object, x, y):
         if (not 0 <= x + self.manipulate_x <= 18 or not 0 <= y + self.manipulate_y <= 18 or
@@ -226,8 +231,7 @@ class Manipulate_action(pygame.sprite.Sprite):
             pygame.draw.rect(self.image, pygame.Color('white'), (0, 0, 48, 48), width=2)
         else:
             self.image = self.default_image.copy()
-
-        self.image.blit(pygame.font.Font(fullname('data/fonts', 'CustomFontTtf12H10.ttf'), 24).render(str(self.cost), 1, pygame.Color('white')), (2, 26))
+        self.image.blit(self.font.render(str(self.cost), 1, pygame.Color('white')), (2, 26))
 
 
 object_manager.add_objects([Place_action(Mirror(10000, 10000, 0, game_objects_board, is_place_action=True)),

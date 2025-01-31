@@ -13,8 +13,8 @@ from Constant_files.CONSTANTS import BASE_DESCRIPTION_LEFT, BASE_DESCRIPTION_TOP
 class Base(pygame.sprite.Sprite):
     def __init__(self, cannons):
         super().__init__(game_sprite_group, base_sprite_group)
-        self.x = 8  # Координата X базы на клеточном поле.
-        self.y = 8  # Координата Y базы на клеточном поле.
+        self.x = 9  # Координата X базы на клеточном поле.
+        self.y = 9  # Координата Y базы на клеточном поле.
 
         self.description = Base_description(1, BASE_DESCRIPTION_LEFT, BASE_DESCRIPTION_TOP, 396, 266, self)
         self.cannons = cannons
@@ -26,7 +26,7 @@ class Base(pygame.sprite.Sprite):
         self.width = CELL_SIZE * 3  # Ширина базы.
         self.height = CELL_SIZE * 3  # Высота бызы.
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
-        self.rect = pygame.Rect(BOARD_LEFT + self.x * CELL_SIZE, BOARD_TOP + self.y * CELL_SIZE, self.width,
+        self.rect = pygame.Rect(BOARD_LEFT + (self.x - 1) * CELL_SIZE, BOARD_TOP + (self.y - 1) * CELL_SIZE, self.width,
                                 self.height)  # Прямоугольник для взаимодействия.
         self.image.fill(pygame.Color('blue'))
 

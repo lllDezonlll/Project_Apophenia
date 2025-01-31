@@ -108,8 +108,8 @@ class Mirror(pygame.sprite.Sprite):
 
     def kill_self(self):
         self.texture.kill()
+        self.health_bar.kill()
         self.board.del_object(self)
-        self.rect.x, self.rect.y = 10000, 10000
         self.kill()
 
     def update(self, event):
