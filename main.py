@@ -6,7 +6,7 @@ from Constant_files.CONSTANTS import *
 from Constant_files.SPRITE_GROUPS import *
 from Constant_files.CONSTANT_OBJECTS import screen, clock, music, window
 
-from classes.helper_classes.board_classes import tiles_board, game_objects_board, spawner
+from classes.helper_classes.board_classes import tiles_board, game_objects_board
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
 from classes.helper_classes.object_deck_classes import object_manager, elixir
 
@@ -150,9 +150,6 @@ def game():
                     for sprite in enemy_sprite_group.sprites().copy():
                         sprite.do_action()
                         sprite.next_move_calculated()
-
-                    spawner.calculate_spawn()
-                    spawner.spawn_enemies()
 
                     game_objects_board.print_objects()
 

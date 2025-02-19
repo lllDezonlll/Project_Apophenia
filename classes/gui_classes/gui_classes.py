@@ -127,8 +127,7 @@ class Parallax_Image(pygame.sprite.Sprite):
 
 
 class Health_Bar(Following_Texture):
-    # image = load_image('data/textures', 'health.png')
-    image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
+    image = load_image('data/textures', 'health.png')
 
     def __init__(self, object, image, *groups, rotatable=False, offset_x=0, offset_y=0):
         super().__init__(object, image, *groups, rotatable=False, offset_x=0, offset_y=0)
