@@ -42,9 +42,6 @@ class Laser(pygame.sprite.Sprite):
             self.rect = self.rect.move(self.speed, 0)
             self.rect.y = find_coords_for_laser(self.rect.x, self.rect.y)[1] * CELL_SIZE + CELL_SIZE / 2 + BOARD_TOP - self.rect.w / 2
 
-
-        print(self.rect)
-
     # Удаление себя и своей текстуры.
     def kill_self(self):
         self.texture.kill()

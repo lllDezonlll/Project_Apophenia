@@ -137,7 +137,6 @@ def game():
             if pause:
                 result = pause_menu(current_turn)
                 pause, return_to_main_menu = not result[0], result[1]
-                print(1)
             else:
                 if end_turn_button.update():
                     current_turn = 'Enemy'
@@ -207,6 +206,7 @@ def game():
             window.blit(pygame.transform.scale(screen, SIZE), (0, 0))
             # Тик у таймера от фпс.
             clock.tick(FPS)
+
 
             # Обновление кадра.
             pygame.display.flip()
