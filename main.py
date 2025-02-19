@@ -6,12 +6,12 @@ from Constant_files.CONSTANTS import *
 from Constant_files.SPRITE_GROUPS import *
 from Constant_files.CONSTANT_OBJECTS import screen, clock, music, window
 
-from classes.helper_classes.board_classes import tiles_board, game_objects_board
+from classes.helper_classes.board_classes import *
 from classes.helper_classes.deck_and_cards_classes import deck_active, deck_hand, deck_discard, energy
 from classes.helper_classes.object_deck_classes import object_manager, elixir
 
 from classes.object_classes.laser_class import Laser
-from classes.object_classes.enemy_classes import Enemy, Enemy_Shooter
+from classes.object_classes.enemy_classes import *
 from classes.object_classes.mirror_classes import Mirror
 from classes.object_classes.tile_classes import Default_Tile, Void_Tile
 from classes.object_classes.wall_classes import Wall
@@ -39,12 +39,11 @@ def main_menu():
         music.set_volume(0.01)
         music.play(-1)
 
-
         running = True
         while running:
             if music.get_volume() != 0.5:
                 music.set_volume(music.get_volume() + 0.01)
-            screen =  pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)
+            screen = pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     terminate()
@@ -58,12 +57,10 @@ def main_menu():
             texture_cursor_sprite_group.update(1)
             parallax_image_sprite_group.update(1)
 
-
             for sprite in menu_sprites:
                 group = pygame.sprite.Group()
                 group.add(sprite)
                 group.draw(screen)
-
 
             main_menu_sprite_group.draw(screen)
             cursor_sprite_group.draw(screen)
@@ -91,7 +88,7 @@ def game():
         music.play(-1)
 
         while running:  # Основной игровой цикл.
-            screen =  pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)
+            screen = pygame.Surface((1920, 1080), pygame.SRCALPHA, 32)
             if music.get_volume() != 0.5:
                 music.set_volume(music.get_volume() + 0.01)
 

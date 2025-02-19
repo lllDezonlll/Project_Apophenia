@@ -5,7 +5,7 @@ from Constant_files.SPRITE_GROUPS import enemy_sprite_group, game_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE, CELL_COUNT
 from funcs.prom_funcs.Load_func import load_map
 
-from classes.object_classes.enemy_classes import Enemy, Enemy_Shooter, Tomb_Wrecker
+from classes.object_classes.enemy_classes import *
 
 from random import choice, randrange
 
@@ -83,10 +83,16 @@ class Game_Objects_Board(Board):
                     self.board[y][x] = Mirror(x, y, int(current_data[-3::]), self)
                 elif current_data == 'wall':
                     self.board[y][x] = Wall(x, y, self)
+                elif current_data == 'enemy':
+                    self.board[y][x] = Enemy(x, y, self, tiles_board, 0)
                 elif current_data == 'shooter':
-                    self.board[y][x] = Enemy_Shooter(x, y, self, tiles_board)
+                    self.board[y][x] = Enemy_Shooter(x, y, self, tiles_board, 0)
                 elif current_data == 'tomb_wrecker':
-                    self.board[y][x] = Tomb_Wrecker(x, y, self, tiles_board)
+                    self.board[y][x] = Tomb_Wrecker(x, y, self, tiles_board, 0)
+                elif current_data == 'ghost':
+                    self.board[y][x] = Ghost(x, y, self, tiles_board, 0)
+                elif current_data == 'graver':
+                    self.board[y][x] = Graveter(x, y, self, tiles_board, 0)
 
     def add_object(self, object, del_previous=False):
         try:

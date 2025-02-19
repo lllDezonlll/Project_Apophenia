@@ -16,9 +16,8 @@ import networkx as nx
 
 class Enemy(pygame.sprite.Sprite):
     image = load_image('data/textures', 'skeleton.png', colorkey=-1)
-    cost = 5
 
-    def __init__(self, x, y, objects_board, tiles_board, health=50, damage=20):
+    def __init__(self, x, y, objects_board, tiles_board, orientation, health=50, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
         self.x = x  # Координата X врага на клеточном поле.
         self.y = y  # Координата Y врага на клеточном поле.
@@ -30,6 +29,7 @@ class Enemy(pygame.sprite.Sprite):
         self.target = None  # Инициализация целевого объекта
         self.next_move = None
         self.result = None
+        self.orientation = orientation
 
         self.health = health  # Здоровье врага.
         self.width = CELL_SIZE  # Ширина врага.
@@ -129,6 +129,14 @@ class Enemy(pygame.sprite.Sprite):
         if self.is_coordinate_free(*self.next_move):
             next_x, next_y = self.next_move
             self.objects_board.board[self.y][self.x] = '?'
+            if next_x > self.x:
+                self.orientation = 0
+            elif next_x < self.x:
+                self.orientation = 180
+            elif next_y > self.y:
+                self.orientation = 90
+            elif next_y < self.y:
+                self.orientation = -90
             self.x = next_x
             self.y = next_y
             self.objects_board.add_object(self)
@@ -205,9 +213,8 @@ class Enemy(pygame.sprite.Sprite):
 
 class Enemy_Shooter(pygame.sprite.Sprite):
     image = load_image('data/textures', 'skeleton.png', colorkey=-1)
-    cost = 8
 
-    def __init__(self, x, y, objects_board, tiles_board, health=20, damage=20):
+    def __init__(self, x, y, objects_board, tiles_board, orientation, health=40, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
         self.x = x  # Координата X врага на клеточном поле.
         self.y = y  # Координата Y врага на клеточном поле.
@@ -219,6 +226,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
         self.target = None  # Инициализация целевого объекта
         self.next_move = None
         self.result = None
+        self.orientation = orientation
 
         self.health = health  # Здоровье врага.
         self.width = CELL_SIZE  # Ширина врага.
@@ -313,16 +321,16 @@ class Enemy_Shooter(pygame.sprite.Sprite):
             dx = self.target.x - self.x
             dy = self.target.y - self.y
             if dx == 0 and dy != 0:
-                orientation = 90 if dy > 0 else -90
+                self.orientation = 90 if dy > 0 else -90
             elif dy == 0 and dx != 0:
-                orientation = 0 if dx > 0 else 180
+                self.orientation = 0 if dx > 0 else 180
             else:
                 return  # Не стреляем, если цель не на одной прямой
 
             # Создаем лазер
             laser_x = BOARD_LEFT + self.x * CELL_SIZE + CELL_SIZE // 2
             laser_y = BOARD_TOP + self.y * CELL_SIZE + CELL_SIZE // 2
-            Laser(laser_x, laser_y, orientation, damage=self.damage)
+            Laser(laser_x, laser_y, self.orientation, damage=self.damage)
 
     def do_action(self):
         # Поиск цели на прямой линии
@@ -345,6 +353,14 @@ class Enemy_Shooter(pygame.sprite.Sprite):
         next_x, next_y = self.next_move
         # Убедимся, что новая позиция допустима
         if self.can_move(next_x, next_y):
+            if next_x > self.x:
+                self.orientation = 0
+            elif next_x < self.x:
+                self.orientation = 180
+            elif next_y > self.y:
+                self.orientation = 90
+            elif next_y < self.y:
+                self.orientation = -90
             # Удаляем себя с текущей позиции
             self.objects_board.board[self.y][self.x] = '?'
             # Перемещаемся на новую позицию
@@ -419,9 +435,92 @@ class Enemy_Shooter(pygame.sprite.Sprite):
                     
 
 class Tomb_Wrecker(Enemy):
-    def __init__(self, x, y, objects_board, tiles_board, health=50, damage=20):
-        super().__init__(x, y, objects_board, tiles_board, health=50, damage=20)
-        self.move_counter = 0
+    def __init__(self, x, y, objects_board, tiles_board, orientation, health=50, damage=40):
+        super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
+        self.move_counter = 0  # Счетчик ходов
+
+    def do_action(self, *event):
+        self.move_counter += 1  # Увеличиваем счетчик ходов
+
+        # Ходим только каждый второй ход
+        if self.move_counter % 2 == 0:
+            super().do_action()
 
     def move_towards_something(self):
-        super().move_towards_something()
+        next_x, next_y = self.next_move
+        if isinstance(self.objects_board.board[next_y][next_x], Wall):
+            wall = self.objects_board.board[next_y][next_x]
+            wall.kill_self()
+        if self.can_move(next_x, next_y):
+            if next_x > self.x:
+                self.orientation = 0
+            elif next_x < self.x:
+                self.orientation = 180
+            elif next_y > self.y:
+                self.orientation = 90
+            elif next_y < self.y:
+                self.orientation = -90
+            # Удаляем себя с текущей позиции
+            self.objects_board.board[self.y][self.x] = '?'
+            # Перемещаемся на новую позицию
+            self.x = next_x
+            self.y = next_y
+            # Обновляем позицию на доске
+            self.objects_board.board[self.y][self.x] = self
+            # Обновляем прямоугольник для отрисовки
+            self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
+            self.rect.y = BOARD_TOP + self.y * CELL_SIZE
+
+    def create_graph(self):
+        graph = nx.grid_2d_graph(CELL_COUNT, CELL_COUNT)
+        nodes_to_remove = []
+
+        for enemy in enemy_sprite_group:
+            if enemy != self:  # Исключаем текущего врага
+                x, y = enemy.x, enemy.y
+                nodes_to_remove.append((x, y))
+
+        for (x, y) in graph.nodes:
+            if isinstance(self.objects_board.board[y][x], Base):
+                nodes_to_remove.append((x, y))
+        for node in nodes_to_remove:
+            try:
+                graph.remove_node(node)
+            except nx.NetworkXError:
+                pass
+        return graph
+
+
+class Ghost(Enemy):
+    def __init__(self, x, y, objects_board, tiles_board, orientation, health=10, damage=50):
+        super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
+
+    def deal_damage(self):
+        if len(self.target.groups()) == 0:
+            self.explosion()
+            return
+
+        self.explosion()
+        self.kill_self()
+
+    def explosion(self):
+        current_x, current_y = self.x, self.y
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                # Координаты соседней клетки
+                neighbor_x = current_x + dx
+                neighbor_y = current_y + dy
+
+                if 0 <= neighbor_x < CELL_COUNT and 0 <= neighbor_y < CELL_COUNT:
+                    neighbor_object = self.objects_board.board[neighbor_y][neighbor_x]
+
+                    if neighbor_object != '?' and neighbor_object is not None:
+                        if hasattr(neighbor_object, 'take_damage'):
+                            neighbor_object.take_damage(self.damage)
+
+    def do_action(self):
+        super().do_action()
+        if self.objects_board.board[self.y][self.x] != '?':
+            super().do_action()
+            if self.find_nearest_target() is None:
+                self.explosion()

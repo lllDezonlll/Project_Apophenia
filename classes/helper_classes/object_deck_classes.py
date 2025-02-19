@@ -17,7 +17,7 @@ class Elixir(Energy):
 
 
 
-elixir = Elixir(0)
+elixir = Elixir(float('inf'))
 
 
 class Object_manager(pygame.sprite.Sprite):
