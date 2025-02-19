@@ -15,7 +15,7 @@ import networkx as nx
 
 
 class Enemy(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
+    image = load_image('data/textures', 'skeleton.png', colorkey=-1)
     cost = 5
 
     def __init__(self, x, y, objects_board, tiles_board, health=50, damage=20):
@@ -204,7 +204,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Enemy_Shooter(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'test_enemy.png', colorkey=-1)
+    image = load_image('data/textures', 'skeleton.png', colorkey=-1)
     cost = 8
 
     def __init__(self, x, y, objects_board, tiles_board, health=20, damage=20):
@@ -416,3 +416,12 @@ class Enemy_Shooter(pygame.sprite.Sprite):
                     self.laser = laser
                     self.take_damage(laser.damage)
                     laser.kill_self()
+                    
+
+class Tomb_Wrecker(Enemy):
+    def __init__(self, x, y, objects_board, tiles_board, health=50, damage=20):
+        super().__init__(x, y, objects_board, tiles_board, health=50, damage=20)
+        self.move_counter = 0
+
+    def move_towards_something(self):
+        super().move_towards_something()
