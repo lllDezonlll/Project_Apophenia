@@ -690,4 +690,3 @@ class Big_boneser(Enemy):
     def do_action(self):
         super().do_action()
 """
-
