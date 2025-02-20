@@ -114,7 +114,7 @@ class Cannon(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(Cannon.disabled_cannon, -self.orientation)
 
 
-base = Base([Cannon(9, 8, -90),
-             Cannon(9, 10, 90),
+base = Base([Cannon(9, 10, 90),
              Cannon(8, 9, 180),
+             Cannon(9, 8, -90),
              Cannon(10, 9, 0)])
