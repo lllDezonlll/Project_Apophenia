@@ -1,4 +1,5 @@
 import sys
+import csv
 
 import pygame.display
 
@@ -115,6 +116,8 @@ def game():
                         Laser(laser_x, laser_y, 0)
                     if event.key == pygame.K_r:
                         object_manager.rotate_objects('left')
+                    if event.key == pygame.K_p:
+                        save_map()
                     if event.key == pygame.K_t:
                         object_manager.rotate_objects('right')
                     if event.key == pygame.K_1:
@@ -206,7 +209,7 @@ def game():
             window.fill((0, 0, 0))
             window.blit(pygame.transform.scale(screen, SIZE), (0, 0))
             # Тик у таймера от фпс.
-            clock.tick(FPS)
+            print(clock.tick(FPS))
 
             # Обновление кадра.
             pygame.display.flip()
@@ -224,6 +227,22 @@ def pause_menu(event):
     return_to_main_menu = pause_escape_button.update()
 
     return pause_play_button.update(), return_to_main_menu
+
+
+def save_map():
+    name = 'data/maps/' + input() + '.csv'
+    with open(name, 'w', encoding='UTF-8') as mapFile:
+        writer = csv.writer(mapFile, delimiter=';', quotechar='"')
+        for i in range(19):
+            row = []
+            for j in range(19):
+                tile = tiles_board.board[i][j]
+                object = game_objects_board.board[i][j]
+                row.append((tile, object))
+
+            print(row)
+
+            writer.writerow([type(i[0]).__name__ + ' ||| ' + type(i[1]).__name__ for i in row])
 
 
 elixir_grow = 1

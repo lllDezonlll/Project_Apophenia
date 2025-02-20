@@ -1,7 +1,7 @@
 import sys
 import os
 import pygame
-
+import csv
 
 # Функция загрузки изображений.
 def load_image(path, name, colorkey=None):
@@ -31,9 +31,18 @@ def fullname(path, name):
 def load_map(filename):
     filename = "data/maps/" + filename
 
-    with open(filename, 'r') as mapFile:
-        level_map = [[i.split('|') for i in line.strip().split()] for line in mapFile][:-1:]
+    with open(filename, 'r', encoding='UTF-8') as mapFile:
+        reader = csv.reader(mapFile, delimiter=';', quotechar='"')
+        tile_map, object_map = [], []
 
-    print(level_map)
+        for row in reader:
+            if row == []:
+                continue
+            tile_map.append([i.split(' ||| ')[0] for i in row])
+            object_map.append([i.split(' ||| ')[1] for i in row])
 
-    return level_map
+        print(tile_map)
+
+        print(object_map)
+
+    return tile_map, object_map

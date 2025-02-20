@@ -19,6 +19,7 @@ class Mirror(pygame.sprite.Sprite):
 
         self.orientation = orientation  # Поворот зеркала.
         self.health = health  # Здоровье зеркала.
+        self.max_health = health
         self.state = state  # Состояние зеркала (например, нормальное, поврежденное).
         self.unique_abilities = unique_abilities if unique_abilities else []  # Уникальные способности.
         self.width = CELL_SIZE  # Ширина зеркала.
@@ -30,8 +31,8 @@ class Mirror(pygame.sprite.Sprite):
             self.rect.x = 10000
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Mirror.image, [game_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=0, offset_y=0)
-        self.health_bar = Health_Bar(self, None, [game_sprite_group, texture_health_group], offset_y=-22)
+        self.texture = Following_Texture(self, [Mirror.image], [game_sprite_group, texture_mirror_sprite_group], rotatable=True, offset_x=0, offset_y=0)
+        self.health_bar = Health_Bar(self, [None], [game_sprite_group, texture_health_group], offset_y=-22)
         if not is_place_action:
             self.board.add_object(self, del_previous=True)
 

@@ -14,13 +14,15 @@ class Wall(pygame.sprite.Sprite):
         super().__init__(game_sprite_group, object_sprite_group, wall_sprite_group)
         self.x, self.y, self.board = x, y, board
         self.value = 0
+
         self.health = health
+        self.max_health = health
 
         self.image = Wall.image
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
         self.hitbox = Hitbox(self)
 
-        self.health_bar = Health_Bar(self, None, [game_sprite_group, texture_health_group], offset_y=-22)
+        self.health_bar = Health_Bar(self, [None], [game_sprite_group, texture_health_group], offset_y=-22)
 
         self.laser = None
 

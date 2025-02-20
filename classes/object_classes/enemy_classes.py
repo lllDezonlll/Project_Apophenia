@@ -15,7 +15,15 @@ import networkx as nx
 
 
 class Enemy(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'skeleton.png', colorkey=-1)
+    image = load_image('data/textures', 'skeleton_1.png', colorkey=-1)
+    image_2 = load_image('data/textures', 'skeleton_2.png', colorkey=-1)
+    image_3 = load_image('data/textures', 'skeleton_3.png', colorkey=-1)
+    image_4 = load_image('data/textures', 'skeleton_4.png', colorkey=-1)
+    image_5 = load_image('data/textures', 'skeleton_5.png', colorkey=-1)
+    image_6 = load_image('data/textures', 'skeleton_6.png', colorkey=-1)
+    image_7 = load_image('data/textures', 'skeleton_7.png', colorkey=-1)
+    image_8 = load_image('data/textures', 'skeleton_8.png', colorkey=-1)
+
 
     def __init__(self, x, y, objects_board, tiles_board, orientation, health=50, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
@@ -32,16 +40,23 @@ class Enemy(pygame.sprite.Sprite):
         self.orientation = orientation
 
         self.health = health  # Здоровье врага.
+        self.max_health = health
+
         self.width = CELL_SIZE  # Ширина врага.
         self.height = CELL_SIZE  # Высота врага.
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Enemy.image, [game_sprite_group, texture_enemy_sprite_group])
-        self.health_bar = Health_Bar(self, None, [game_sprite_group, texture_health_group], offset_y=-22)
+        self.init_individual()
         self.draw()
         self.next_move_calculated()
+
+    def init_individual(self):
+        self.texture = Following_Texture(self, [Enemy.image, Enemy.image_2, Enemy.image_3, Enemy.image_4,
+                                                Enemy.image_5, Enemy.image_6, Enemy.image_7, Enemy.image_8],
+                                         [game_sprite_group, texture_enemy_sprite_group])
+        self.health_bar = Health_Bar(self, [None], [game_sprite_group, texture_health_group], offset_y=-22)
 
     # Получение урона.
     def take_damage(self, damage):
@@ -212,7 +227,7 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Enemy_Shooter(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'skeleton.png', colorkey=-1)
+    image = load_image('data/textures', 'skeleton_1.png', colorkey=-1)
 
     def __init__(self, x, y, objects_board, tiles_board, orientation, health=40, damage=20):
         super().__init__(game_sprite_group, object_sprite_group, enemy_sprite_group)
@@ -229,14 +244,16 @@ class Enemy_Shooter(pygame.sprite.Sprite):
         self.orientation = orientation
 
         self.health = health  # Здоровье врага.
+        self.max_health = health
+
         self.width = CELL_SIZE  # Ширина врага.
         self.height = CELL_SIZE  # Высота врага.
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA, 32)
         self.rect = pygame.Rect(BOARD_LEFT + x * CELL_SIZE, BOARD_TOP + y * CELL_SIZE, self.width, self.height)  # Прямоугольник для взаимодействия.
 
         self.hitbox = Hitbox(self)
-        self.texture = Following_Texture(self, Enemy_Shooter.image, [game_sprite_group, texture_enemy_sprite_group])
-        self.health_bar = Health_Bar(self, None, [game_sprite_group, texture_health_group], offset_y=-22)
+        self.texture = Following_Texture(self, [Enemy_Shooter.image], [game_sprite_group, texture_enemy_sprite_group])
+        self.health_bar = Health_Bar(self, [None], [game_sprite_group, texture_health_group], offset_y=-22)
         pygame.draw.rect(self.image, pygame.Color('red'), (24, 24, 2, 2))
         self.next_move_calculated()
 
@@ -492,8 +509,23 @@ class Tomb_Wrecker(Enemy):
 
 
 class Ghost(Enemy):
+    image = load_image('data/textures', 'ghost_1.png', colorkey=-1)
+    image_2 = load_image('data/textures', 'ghost_2.png', colorkey=-1)
+    image_3 = load_image('data/textures', 'ghost_3.png', colorkey=-1)
+    image_4 = load_image('data/textures', 'ghost_4.png', colorkey=-1)
+    image_5 = load_image('data/textures', 'ghost_5.png', colorkey=-1)
+    image_6 = load_image('data/textures', 'ghost_6.png', colorkey=-1)
+    image_7 = load_image('data/textures', 'ghost_7.png', colorkey=-1)
+    image_8 = load_image('data/textures', 'ghost_8.png', colorkey=-1)
+
     def __init__(self, x, y, objects_board, tiles_board, orientation, health=10, damage=50):
         super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
+
+    def init_individual(self):
+        self.texture = Following_Texture(self, [Ghost.image, Ghost.image_2, Ghost.image_3, Ghost.image_4,
+                                                Ghost.image_5, Ghost.image_6, Ghost.image_7, Ghost.image_8],
+                                         [game_sprite_group, texture_enemy_sprite_group])
+        self.health_bar = Health_Bar(self, [None], [game_sprite_group, texture_health_group], offset_y=-22)
 
     def deal_damage(self):
         if len(self.target.groups()) == 0:

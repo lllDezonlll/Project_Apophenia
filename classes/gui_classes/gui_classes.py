@@ -9,10 +9,12 @@ from math import floor
 
 # Класс текстур, накладываемых поверх игровых объектов.
 class Following_Texture(pygame.sprite.Sprite):
-    def __init__(self, object, image, *groups, rotatable=False, offset_x=0, offset_y=0):
+    def __init__(self, object, images, *groups, rotatable=False, offset_x=0, offset_y=0):
         super().__init__(*groups)
-        self.image = image
-        self.default_image = image
+        self.animate_timer = 0
+        self.images = images
+        self.image = self.images[0]
+        self.default_images = self.images
         if self.image is None:
             self.rect = pygame.Rect(0, 0, 1920, 1080)
         else:
@@ -23,20 +25,36 @@ class Following_Texture(pygame.sprite.Sprite):
         self.rotatable = rotatable
         self.rect.x, self.rect.y = 10000, 10000
         if self.rotatable:
-            self.orientation = None
+            self.orientation = self.object.orientation
+            for i in range(len(self.images)):
+                self.images[i] = pygame.transform.rotate(self.images[i], -self.orientation)
+            self.image = pygame.transform.rotate(self.image, -self.orientation)
 
     def update(self, event):
+        self.animate()
         # Проверка на статичность или ?вращабельность?.
         if self.rotatable:
-            if self.orientation != self.object.orientation:
-                self.orientation = self.object.orientation
-                self.rotate()
+            self.rotate()
 
         # Следование за игровым объектом
         self.rect.x, self.rect.y = self.object.rect.x + self.offset_x, self.object.rect.y + self.offset_y
 
-    # Вращает такстуру в зависимости от поворота следуемого объекта. Работает только при rotatable=True.
+    # Вращает текстуру в зависимости от поворота следуемого объекта. Работает только при rotatable=True.
     def rotate(self):
+        if self.orientation == 0 and self.object.orientation == -90:
+            turn = 90
+        elif self.orientation == 180 and self.object.orientation == -90:
+            turn = -90
+        elif self.orientation == -90 and self.object.orientation == 180:
+            turn = 90
+        elif self.orientation < self.object.orientation:
+            turn = -90
+        elif self.orientation > self.object.orientation:
+            turn = 90
+        else:
+            turn = 0
+
+        self.orientation = self.object.orientation
         self.offset_x, self.offset_y = self.default_offset_x, self.default_offset_y
         if self.orientation == 90:
             self.offset_x, self.offset_y = self.object.rect.w - self.offset_y - self.rect.h, self.offset_x
@@ -44,7 +62,17 @@ class Following_Texture(pygame.sprite.Sprite):
             self.offset_x, self.offset_y = self.object.rect.h - self.offset_x - self.rect.w, self.object.rect.w - self.offset_y - self.rect.h
         if self.orientation == -90:
             self.offset_x, self.offset_y = self.offset_y, self.object.rect.h - self.offset_x - self.rect.w
-        self.image = pygame.transform.rotate(self.default_image, -self.object.orientation)
+        for i in range(len(self.images)):
+            self.images[i] = pygame.transform.rotate(self.images[i], turn)
+        self.image = self.images[self.animate_timer // 8 % len(self.images)]
+
+    def animate(self):
+        if self.animate_timer % 8 == 0:
+            try:
+                self.image = self.images[self.images.index(self.image) + 1]
+            except Exception:
+                self.image = self.images[0]
+        self.animate_timer += 1
 
 
 # Класс игрового курсора.
@@ -56,7 +84,7 @@ class Cursor(pygame.sprite.Sprite):
         self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
         self.image.fill(pygame.Color('white'))
         self.rect = self.image.get_rect()
-        self.texture = Following_Texture(self, Cursor.image, [game_sprite_group, texture_cursor_sprite_group], offset_y=-3, offset_x=-3)
+        self.texture = Following_Texture(self, [Cursor.image], [game_sprite_group, texture_cursor_sprite_group], offset_y=-3, offset_x=-3)
 
     def update(self, event):
         # Следование за системным курсором и обновления затрагиваемого описания.
@@ -153,3 +181,6 @@ class Health_Bar(Following_Texture):
         self.image.blit(self.font.render(str(self.object.health), 1, pygame.Color((255, 255, 255))), (6 + (48 - text.get_size()[0]) // 2 - 10, 0))
         self.image.blit(Health_Bar.image, ((48 - text.get_size()[0]) // 2 + text.get_size()[0] - 4, 4))
         self.rect.x -= 4
+
+        if self.object.health == self.object.max_health:
+            self.image = pygame.Surface((1, 1), pygame.SRCALPHA, 32)
