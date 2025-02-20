@@ -11,6 +11,7 @@ from classes.object_classes.wall_classes import Wall
 from classes.object_classes.base_classes import Base
 from classes.object_classes.laser_class import Laser
 from funcs.prom_funcs.Load_func import load_image
+from random import choice
 import networkx as nx
 
 
@@ -449,8 +450,9 @@ class Enemy_Shooter(pygame.sprite.Sprite):
                     self.laser = laser
                     self.take_damage(laser.damage)
                     laser.kill_self()
-                    
 
+
+# Разрушитель гробниц (таран)
 class Tomb_Wrecker(Enemy):
     def __init__(self, x, y, objects_board, tiles_board, orientation, health=50, damage=40):
         super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
@@ -508,6 +510,7 @@ class Tomb_Wrecker(Enemy):
         return graph
 
 
+# Призрак
 class Ghost(Enemy):
     image = load_image('data/textures', 'ghost_1.png', colorkey=-1)
     image_2 = load_image('data/textures', 'ghost_2.png', colorkey=-1)
@@ -556,3 +559,135 @@ class Ghost(Enemy):
             super().do_action()
             if self.find_nearest_target() is None:
                 self.explosion()
+
+
+# Могильщик
+class Graveter(Enemy_Shooter):
+    def __init__(self, x, y, objects_board, tiles_board, orientation, health=15, damage=10):
+        super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
+
+    def shoot_laser(self):
+        # Стрельба лазером в направлении цели
+        laser_x = BOARD_LEFT + self.x * CELL_SIZE + CELL_SIZE // 2
+        laser_y = BOARD_TOP + self.y * CELL_SIZE + CELL_SIZE // 2
+        Laser(laser_x, laser_y, 0, damage=self.damage)
+        Laser(laser_x, laser_y, 90, damage=self.damage)
+        Laser(laser_x, laser_y, -90, damage=self.damage)
+        Laser(laser_x, laser_y, 180, damage=self.damage)
+
+    def do_action(self):
+        self.shoot_laser()
+        # масив доступных клеток
+        available_cells = []
+        for dx in range(CELL_COUNT):
+            for dy in range(CELL_COUNT):
+                if self.objects_board.board[dy][dx] == '?':
+                    available_cells.append((dx, dy))
+        if available_cells:
+            self.x, self.y = choice(available_cells)
+            # Удаляем себя с текущей позиции
+            self.objects_board.board[self.y][self.x] = '?'
+            # Обновляем позицию на доске
+            self.objects_board.board[self.y][self.x] = self
+            # Обновляем прямоугольник для отрисовки
+            self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
+            self.rect.y = BOARD_TOP + self.y * CELL_SIZE
+
+
+"""# Большой скелет толкатель
+class Big_boneser(Enemy):
+    def __init__(self, x, y, objects_board, tiles_board, orientation, health=100, damage=30):
+        super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
+
+    def create_graph(self):
+        graph = nx.grid_2d_graph(CELL_COUNT, CELL_COUNT)
+        nodes_to_remove = []
+
+        # Удаляем узлы, соответствующие другим врагам
+        for enemy in enemy_sprite_group:
+            if enemy != self:  # Исключаем текущего врага
+                x, y = enemy.x, enemy.y
+                nodes_to_remove.append((x, y))
+
+        # Удаляем узлы, соответствующие базе
+        for base in base_sprite_group:
+            nodes_to_remove.append((base.x, base.y))
+
+        # Удаляем узлы, которые находятся за пределами карты или являются Void_Tile
+        for (x, y) in graph.nodes:
+            if x < 0 or x >= CELL_COUNT or y < 0 or y >= CELL_COUNT:
+                nodes_to_remove.append((x, y))
+            if isinstance(self.tiles_board.board[y][x], Void_Tile):
+                nodes_to_remove.append((x, y))
+
+        # Удаляем узлы из графа
+        for node in nodes_to_remove:
+            try:
+                graph.remove_node(node)
+            except nx.NetworkXError:
+                pass
+
+        # Добавляем ребра, если между клетками стоит одна стена
+        for (x, y) in graph.nodes:
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # Только соседние клетки (без диагоналей)
+                neighbor_x = x + dx
+                neighbor_y = y + dy
+
+                # Проверяем, что соседняя клетка находится в пределах карты
+                if 0 <= neighbor_x < CELL_COUNT and 0 <= neighbor_y < CELL_COUNT:
+                    # Если между клетками стоит одна стена, добавляем ребро
+                    if isinstance(self.tiles_board.board[neighbor_y][neighbor_x], Wall):
+                        # Проверяем, что за стеной нет другой стены
+                        behind_wall_x = neighbor_x + dx
+                        behind_wall_y = neighbor_y + dy
+
+                        if 0 <= behind_wall_x < CELL_COUNT and 0 <= behind_wall_y < CELL_COUNT:
+                            if not isinstance(self.tiles_board.board[behind_wall_y][behind_wall_x], Wall):
+                                graph.add_edge((x, y), (neighbor_x, neighbor_y))
+
+        return graph
+
+    def move_towards_something(self):
+        if self.next_move is None:
+            return
+
+        next_x, next_y = self.next_move
+
+        # Проверяем, является ли следующая клетка стеной
+        if isinstance(self.tiles_board.board[next_y][next_x], Wall):
+            # Координаты за стеной
+            dx = next_x - self.x
+            dy = next_y - self.y
+            behind_wall_x = next_x + dx
+            behind_wall_y = next_y + dy
+
+            # Проверяем, что за стеной нет другой стены и клетка свободна
+            if 0 <= behind_wall_x < CELL_COUNT and 0 <= behind_wall_y < CELL_COUNT:
+                if self.objects_board.board[behind_wall_y][behind_wall_x] == '?':
+                    if self.is_coordinate_free(behind_wall_x, behind_wall_y):
+                        # Толкаем стену
+                        self.tiles_board.board[behind_wall_y][behind_wall_x] = self.tiles_board.board[next_y][next_x]
+                        self.tiles_board.board[next_y][next_x] = None
+
+                        # Перемещаем Big_boneser на следующую клетку
+                        self.objects_board.board[self.y][self.x] = '?'
+                        self.x, self.y = next_x, next_y
+                        self.objects_board.add_object(self)
+                        self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
+                        self.rect.y = BOARD_TOP + self.y * CELL_SIZE
+
+        # Если следующая клетка не стена или стену нельзя толкнуть, двигаемся как обычно
+        if self.is_coordinate_free(next_x, next_y):
+            print(True)
+            self.objects_board.board[self.y][self.x] = '?'
+            self.x, self.y = next_x, next_y
+            self.objects_board.add_object(self)
+            self.rect.x = BOARD_LEFT + self.x * CELL_SIZE
+            self.rect.y = BOARD_TOP + self.y * CELL_SIZE
+        else:
+            print(False)
+            
+    def do_action(self):
+        super().do_action()
+"""
+

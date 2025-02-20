@@ -123,7 +123,7 @@ class Card(pygame.sprite.Sprite):
 
         if not pygame.mouse.get_pressed()[0] and pygame.sprite.collide_mask(self, cursor) and self.deck == deck_hand and self.mouse_down and energy.current_count >= self.cost:
 
-            if laser_sprite_group.sprites() != []:
+            if laser_sprite_group.sprites():
                 print('Есть лазеры')
             else:
                 self.play()

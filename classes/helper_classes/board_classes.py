@@ -91,8 +91,10 @@ class Game_Objects_Board(Board):
                     self.board[y][x] = Tomb_Wrecker(x, y, self, tiles_board, 0)
                 elif current_data == 'ghost':
                     self.board[y][x] = Ghost(x, y, self, tiles_board, 0)
-                elif current_data == 'graver':
+                elif current_data == 'graveter':
                     self.board[y][x] = Graveter(x, y, self, tiles_board, 0)
+                """elif current_data == 'big_boneser':
+                    self.board[y][x] = Big_boneser(x, y, self, tiles_board, 0)"""
 
     def add_object(self, object, del_previous=False):
         try:

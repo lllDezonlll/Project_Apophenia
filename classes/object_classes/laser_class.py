@@ -9,18 +9,10 @@ from funcs.prom_funcs.Calc_coords_func import find_coords_on_board, get_mouse_po
 
 # Класс атаки лазером.
 class Laser(pygame.sprite.Sprite):
-    image = load_image('data/textures', 'laser_1.png')
-    image_2 = load_image('data/textures', 'laser_2.png')
-    image_3 = load_image('data/textures', 'laser_3.png')
-    image_4 = load_image('data/textures', 'laser_4.png')
-    image_5 = load_image('data/textures', 'laser_5.png')
-    image_6 = load_image('data/textures', 'laser_6.png')
-    image_7 = load_image('data/textures', 'laser_7.png')
-    image_8 = load_image('data/textures', 'laser_8.png')
+    image = load_image('data/textures', 'laser_test.png')
 
     def __init__(self, x, y, orientation, speed=900 / FPS, damage=20):
         super().__init__(game_sprite_group, laser_sprite_group)
-        self.animate_timer = 0
         self.timer = 0
         self.x, self.y = find_coords_for_laser(x, y)
         self.mirror = None
