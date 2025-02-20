@@ -1,6 +1,6 @@
 import pygame
 from funcs.prom_funcs.Calc_coords_func import find_coords_on_board
-from Constant_files.SPRITE_GROUPS import game_sprite_group, object_sprite_group, base_sprite_group, laser_sprite_group, cannon_sprite_group
+from Constant_files.SPRITE_GROUPS import game_sprite_group, object_sprite_group, base_sprite_group, laser_sprite_group, cannon_sprite_group, base_wall_sprite_group
 from Constant_files.CONSTANTS import BOARD_LEFT, BOARD_TOP, CELL_SIZE
 from classes.helper_classes.hitbox_classes import Hitbox
 from classes.gui_classes.description_classes import Base_description
@@ -45,12 +45,6 @@ class Base(pygame.sprite.Sprite):
                 self.health = 100
 
     def update(self, event):
-        # Получает урон от лазера и уничтожает его при касании.
-        if laser := pygame.sprite.spritecollideany(self, laser_sprite_group):
-            if laser != self.laser:
-                self.laser = laser
-                self.take_damage(laser.damage)
-                laser.kill_self()
         if (pygame.mouse.get_pressed()[0] and
             pygame.mouse.get_pos()[0] in range(self.rect.x, self.rect.x + self.rect.w) and
             pygame.mouse.get_pos()[1] in range(self.rect.y, self.rect.y + self.rect.h)):
@@ -112,6 +106,28 @@ class Cannon(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(Cannon.enabled_cannon, -self.orientation)
         else:
             self.image = pygame.transform.rotate(Cannon.disabled_cannon, -self.orientation)
+
+
+class Base_Wall(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(game_sprite_group, base_sprite_group, base_wall_sprite_group)
+        self.image = pygame.Surface((48, 48), pygame.SRCALPHA, 32)
+        self.width = 48
+        self.height = 48
+        self.x, self.y = x, y
+        self.rect = pygame.Rect(BOARD_LEFT + (self.x) * CELL_SIZE, BOARD_TOP + (self.y) * CELL_SIZE, self.width,
+                                self.height)
+        self.laser = None
+
+    def update(self, *event):
+        if laser := pygame.sprite.spritecollideany(self, laser_sprite_group):
+            if laser != self.laser:
+                self.laser = laser
+                base.take_damage(laser.damage)
+                laser.kill_self()
+
+
+Base_Wall(8, 8), Base_Wall(9, 8), Base_Wall(10, 8), Base_Wall(8, 9), Base_Wall(10, 9), Base_Wall(8, 10), Base_Wall(9, 10), Base_Wall(10, 10)
 
 
 base = Base([Cannon(9, 10, 90),

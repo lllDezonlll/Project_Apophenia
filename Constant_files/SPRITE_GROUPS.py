@@ -13,6 +13,7 @@ hitbox_sprite_group = pygame.sprite.Group()
 description_sprite_group = pygame.sprite.Group()
 texture_health_group = pygame.sprite.Group()
 
+
 texture_cursor_sprite_group = pygame.sprite.Group()
 cursor_sprite_group = pygame.sprite.Group()
 
@@ -22,6 +23,7 @@ texture_mirror_sprite_group = pygame.sprite.Group()
 texture_enemy_sprite_group = pygame.sprite.Group()
 
 base_sprite_group = pygame.sprite.Group()
+base_wall_sprite_group = pygame.sprite.Group()
 
 cannon_sprite_group = pygame.sprite.Group()
 

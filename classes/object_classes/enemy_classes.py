@@ -453,7 +453,7 @@ class Enemy_Shooter(pygame.sprite.Sprite):
 
 
 # Разрушитель гробниц (таран)
-class Tomb_Wrecker(Enemy):
+class Enemy_Tomb_Wrecker(Enemy):
     def __init__(self, x, y, objects_board, tiles_board, orientation, health=50, damage=40):
         super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
         self.move_counter = 0  # Счетчик ходов
@@ -511,7 +511,7 @@ class Tomb_Wrecker(Enemy):
 
 
 # Призрак
-class Ghost(Enemy):
+class Enemy_Ghost(Enemy):
     image = load_image('data/textures', 'ghost_1.png', colorkey=-1)
     image_2 = load_image('data/textures', 'ghost_2.png', colorkey=-1)
     image_3 = load_image('data/textures', 'ghost_3.png', colorkey=-1)
@@ -525,8 +525,8 @@ class Ghost(Enemy):
         super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
 
     def init_individual(self):
-        self.texture = Following_Texture(self, [Ghost.image, Ghost.image_2, Ghost.image_3, Ghost.image_4,
-                                                Ghost.image_5, Ghost.image_6, Ghost.image_7, Ghost.image_8],
+        self.texture = Following_Texture(self, [Enemy_Ghost.image, Enemy_Ghost.image_2, Enemy_Ghost.image_3, Enemy_Ghost.image_4,
+                                                Enemy_Ghost.image_5, Enemy_Ghost.image_6, Enemy_Ghost.image_7, Enemy_Ghost.image_8],
                                          [game_sprite_group, texture_enemy_sprite_group])
         self.health_bar = Health_Bar(self, [None], [game_sprite_group, texture_health_group], offset_y=-22)
 
@@ -562,7 +562,7 @@ class Ghost(Enemy):
 
 
 # Могильщик
-class Graveter(Enemy_Shooter):
+class Enemy_Graveter(Enemy_Shooter):
     def __init__(self, x, y, objects_board, tiles_board, orientation, health=15, damage=10):
         super().__init__(x, y, objects_board, tiles_board, orientation, health=health, damage=damage)
 

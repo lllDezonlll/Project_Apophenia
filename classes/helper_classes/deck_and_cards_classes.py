@@ -256,11 +256,12 @@ class Beliberda(Card):
         self.cost = 2  # Стоимость карты
 
     def play(self):
+        deck_hand.discard_card(self)
         koll_reset = 0
-        for card in deck_hand.cards:
+        for card in deck_hand.cards.copy():
             koll_reset += 1
             deck_hand.discard_card(card)
-        deck_active.draw_card(koll_reset)
+        deck_active.draw_card(3)
 
     def update(self, *event):
         self.check_click_to_play(event)
